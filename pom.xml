@@ -11,6 +11,7 @@
 
     <modules>
         <module>gallery-core</module>
+        <module>gallery-impl</module>
     </modules>
 
     <build>
