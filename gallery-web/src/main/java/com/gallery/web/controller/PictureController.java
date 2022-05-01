@@ -1,6 +1,6 @@
 package com.gallery.web.controller;
 
-import com.gallery.core.service.IPictureService;
+import com.gallery.layer.service.PictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class PictureController {
 
-    private final IPictureService pictureService;
+    private final PictureService pictureService;
 
     @Autowired
-    public PictureController(IPictureService pictureService) {
+    public PictureController(PictureService pictureService) {
         this.pictureService = pictureService;
     }
 

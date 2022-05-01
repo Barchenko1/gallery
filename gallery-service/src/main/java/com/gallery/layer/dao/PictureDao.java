@@ -1,7 +1,7 @@
-package com.gallery.service.dao;
+package com.gallery.layer.dao;
 
 import com.gallery.core.dao.IPictureDao;
-import com.gallery.service.modal.Picture;
+import com.gallery.layer.modal.Picture;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

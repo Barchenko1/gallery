@@ -1,4 +1,4 @@
-package com.gallery.service.config;
+package com.gallery.layer.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 

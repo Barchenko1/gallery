@@ -1,4 +1,4 @@
-package com.gallery.service.modal;
+package com.gallery.layer.modal;
 
 import lombok.Data;
 

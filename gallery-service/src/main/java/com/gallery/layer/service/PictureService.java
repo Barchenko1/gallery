@@ -1,8 +1,8 @@
-package com.gallery.service.service;
+package com.gallery.layer.service;
 
 import com.gallery.core.service.IPictureService;
-import com.gallery.service.dao.PictureDao;
-import com.gallery.service.modal.Picture;
+import com.gallery.layer.dao.PictureDao;
+import com.gallery.layer.modal.Picture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
