@@ -1,4 +1,4 @@
-package com.init.core.dao;
+package com.gallery.core.dao;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +9,9 @@ public interface IPictureDao<T> {
 
     List<T> getAllPictures();
 
+    void addPicture(T picture);
 
+    void updatePicture(T picture);
 
-
+    void deletePicture(T picture);
 }
