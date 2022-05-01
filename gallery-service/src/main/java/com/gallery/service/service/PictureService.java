@@ -33,7 +33,7 @@ public class PictureService implements IPictureService<Picture> {
     @Override
     @Transactional
     public void addPictures(List<Picture> pictures) {
-
+        pictures.forEach(pictureDao::addPicture);
     }
 
     @Override
