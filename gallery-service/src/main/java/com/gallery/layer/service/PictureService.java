@@ -4,15 +4,16 @@ import com.gallery.core.service.IPictureService;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PictureService implements IPictureService {
 
     @Override
-    public Optional<File> getPictureByName(String name) {
-        return Optional.empty();
+    public List<File> getPicturesByFolderName(String name) {
+
+        return Collections.emptyList();
     }
 
     @Override

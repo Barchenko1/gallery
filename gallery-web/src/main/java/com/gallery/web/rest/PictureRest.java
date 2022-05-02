@@ -1,7 +1,9 @@
 package com.gallery.web.rest;
 
 import com.gallery.core.service.IPictureService;
+import com.gallery.web.dto.CreatePictureFolderDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,8 +20,24 @@ public class PictureRest {
         this.pictureService = pictureService;
     }
 
-    @RequestMapping(value = "/pictures", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/pictures", method = RequestMethod.GET)
     public List<File> getPictures() {
         return pictureService.getAllPictures();
     }
+
+    @RequestMapping(value = "/pictures", method = RequestMethod.GET)
+    public List<File> getPictures(@RequestBody CreatePictureFolderDto createPictureFolderDto) {
+        return pictureService.getPicturesByFolderName(createPictureFolderDto.getFolderName());
+    }
+
+    @RequestMapping(value = "/addPictures", method = RequestMethod.GET)
+    public void addPictures(List<File> pictures) {
+        pictureService.addPictures(pictures);
+    }
+
+    @RequestMapping(value = "/deletePictures", method = RequestMethod.GET)
+    public void deletePicture(File picture) {
+        pictureService.deletePicture(picture);
+    }
+
 }

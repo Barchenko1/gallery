@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IPictureService {
-    Optional<File> getPictureByName(String name);
+    List<File> getPicturesByFolderName(String name);
 
     List<File> getAllPictures();
 
