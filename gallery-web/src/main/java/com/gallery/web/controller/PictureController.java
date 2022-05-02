@@ -7,13 +7,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.io.File;
+
 @Controller
 public class PictureController {
 
-    private final PictureService pictureService;
+    private final PictureService<File> pictureService;
 
     @Autowired
-    public PictureController(PictureService pictureService) {
+    public PictureController(PictureService<File> pictureService) {
         this.pictureService = pictureService;
     }
 

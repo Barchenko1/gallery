@@ -8,9 +8,9 @@ public interface IPictureService<T> {
 
     List<T> getAllPictures();
 
-    void addPictures(List<T> pictures);
+    List<T> getPicturePull(int start, int end);
 
-    void updatePicture(T picture);
+    void addPictures(List<T> pictures);
 
     void deletePicture(T picture);
 }

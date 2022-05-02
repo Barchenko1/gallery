@@ -13,8 +13,21 @@
         <module>gallery-core</module>
         <module>gallery-service</module>
         <module>gallery-web</module>
+        <module>gallery-parser</module>
     </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
     <build>
         <pluginManagement>
             <plugins>
@@ -32,6 +45,8 @@
     </build>
 
     <properties>
+        <spring.version>5.3.19</spring.version>
+        <lombok.version>1.18.24</lombok.version>
         <compiler.plugin.version>3.8.0</compiler.plugin.version>
         <source.version>11</source.version>
         <target.version>11</target.version>
