@@ -10,11 +10,11 @@ import java.io.File;
 import java.util.List;
 
 @RestController
-public class PictureRestTest {
-    private final IPictureService<File> pictureService;
+public class PictureRest {
+    private final IPictureService pictureService;
 
     @Autowired
-    public PictureRestTest(IPictureService<File> pictureService) {
+    public PictureRest(IPictureService pictureService) {
         this.pictureService = pictureService;
     }
 

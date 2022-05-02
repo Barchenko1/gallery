@@ -15,6 +15,7 @@
         <module>gallery-web</module>
         <module>gallery-parser</module>
     </modules>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>

@@ -1,16 +1,17 @@
 package com.gallery.core.service;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-public interface IPictureService<T> {
-    Optional<T> getPictureByName(String name);
+public interface IPictureService {
+    Optional<File> getPictureByName(String name);
 
-    List<T> getAllPictures();
+    List<File> getAllPictures();
 
-    List<T> getPicturePull(int start, int end);
+    List<File> getPicturePull(int start, int end);
 
-    void addPictures(List<T> pictures);
+    void addPictures(List<File> pictures);
 
-    void deletePicture(T picture);
+    void deletePicture(File picture);
 }

@@ -3,6 +3,6 @@ package com.gallery.web.dto;
 import lombok.Data;
 
 @Data
-public class RenameFolderDto {
+public class CreateRenameFolderDto {
     private String folderName;
 }

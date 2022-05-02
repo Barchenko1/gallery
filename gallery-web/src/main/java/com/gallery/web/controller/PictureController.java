@@ -1,21 +1,20 @@
 package com.gallery.web.controller;
 
-import com.gallery.layer.service.PictureService;
+import com.gallery.core.service.IPictureService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.File;
-
 @Controller
 public class PictureController {
 
-    private final PictureService<File> pictureService;
+    private final IPictureService pictureService;
 
     @Autowired
-    public PictureController(PictureService<File> pictureService) {
+    public PictureController(IPictureService pictureService) {
         this.pictureService = pictureService;
     }
 
