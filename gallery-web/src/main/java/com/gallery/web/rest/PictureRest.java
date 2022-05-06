@@ -21,12 +21,7 @@ public class PictureRest {
     }
 
     @RequestMapping(value = "/pictures", method = RequestMethod.GET)
-    public List<File> getPictures() {
-        return pictureService.getAllPictures();
-    }
-
-    @RequestMapping(value = "/pictures", method = RequestMethod.GET)
-    public List<File> getPictures(@RequestBody CreatePictureFolderDto createPictureFolderDto) {
+    public List<File> getPicturesByFolder(@RequestBody CreatePictureFolderDto createPictureFolderDto) {
         return pictureService.getPicturesByFolderName(createPictureFolderDto.getFolderName());
     }
 

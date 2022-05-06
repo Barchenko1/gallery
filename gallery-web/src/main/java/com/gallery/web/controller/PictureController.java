@@ -18,7 +18,7 @@ public class PictureController {
         this.pictureService = pictureService;
     }
 
-    @RequestMapping(value = "/pictures", method = RequestMethod.GET)
+    @RequestMapping(value = "/picturesRoute", method = RequestMethod.GET)
     public String getPictures(Model model) {
         model.addAttribute("pictures", pictureService.getAllPictures());
         return "pictures";
