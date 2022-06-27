@@ -1,5 +1,6 @@
 package com.gallery.web.rest;
 
+import com.gallery.core.modal.PictureModal;
 import com.gallery.core.service.IPictureService;
 import com.gallery.web.dto.CreatePictureFolderDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class PictureRest {
     }
 
     @RequestMapping(value = "/pictures", method = RequestMethod.GET)
-    public List<File> getPicturesByFolder(@RequestBody CreatePictureFolderDto createPictureFolderDto) {
+    public List<PictureModal> getPicturesByFolder(@RequestBody CreatePictureFolderDto createPictureFolderDto) {
         return pictureService.getPicturesByFolderName(createPictureFolderDto.getFolderName());
     }
 
@@ -31,7 +32,7 @@ public class PictureRest {
     }
 
     @RequestMapping(value = "/deletePictures", method = RequestMethod.GET)
-    public void deletePicture(File picture) {
+    public void deletePicture(PictureModal picture) {
         pictureService.deletePicture(picture);
     }
 

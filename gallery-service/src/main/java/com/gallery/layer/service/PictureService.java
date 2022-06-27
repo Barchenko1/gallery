@@ -1,5 +1,6 @@
 package com.gallery.layer.service;
 
+import com.gallery.core.modal.PictureModal;
 import com.gallery.core.service.IPictureService;
 import org.springframework.stereotype.Service;
 
@@ -11,18 +12,18 @@ import java.util.List;
 public class PictureService implements IPictureService {
 
     @Override
-    public List<File> getPicturesByFolderName(String name) {
+    public List<PictureModal> getPicturesByFolderName(String name) {
 
         return Collections.emptyList();
     }
 
     @Override
-    public List<File> getAllPictures() {
+    public List<PictureModal> getAllPictures() {
         return null;
     }
 
     @Override
-    public List<File> getPicturePull(int start, int end) {
+    public List<PictureModal> getPicturePull(int start, int end) {
         return null;
     }
 
@@ -32,7 +33,7 @@ public class PictureService implements IPictureService {
     }
 
     @Override
-    public void deletePicture(File picture) {
+    public void deletePicture(PictureModal picture) {
 
     }
 }
