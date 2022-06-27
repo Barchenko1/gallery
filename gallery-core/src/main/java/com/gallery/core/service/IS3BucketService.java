@@ -1,12 +1,10 @@
 package com.gallery.core.service;
 
 import com.gallery.core.modal.PictureModal;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public interface IS3BucketService {
 
     void addPictureToFolder(PictureModal pictureModal, String folderName);

@@ -2,10 +2,14 @@ package com.gallery.layer.service;
 
 import com.gallery.core.modal.PictureModal;
 import com.gallery.core.service.IS3BucketService;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
+@PropertySource("classpath:application.properties")
 public class S3BucketService implements IS3BucketService {
     @Override
     public void addPictureToFolder(PictureModal pictureModal, String folderName) {
