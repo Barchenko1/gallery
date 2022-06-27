@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @PropertySource("classpath:application.properties")
-public class FolderService<T> implements IFolderService {
+public class FolderService implements IFolderService {
 
     @Value("${file.store.path}")
     private String fileStorePath;
