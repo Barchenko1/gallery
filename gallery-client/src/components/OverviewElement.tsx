@@ -1,10 +1,21 @@
 import React from 'react';
+import {ISlide} from "./ITypes";
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 
-const OverviewElement = () => {
+const OverviewElement = ({content}: ISlide) => {
+
     return(
-        <div>
-
-        </div>
+        <div
+            css={css`
+                height: 20%;
+                width: 20%;
+                background-image: url('${content}');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: 50% 50%;
+                `}
+        />
     )
 }
 

@@ -7,14 +7,11 @@ import Slide from "./Slide";
 import { css } from '@emotion/react';
 import AutoPlay from "./AutoPlay";
 import Exit from "./Exit";
+import {ISlideList} from "./ITypes";
 
 const getWidth = () => window.innerWidth;
 
-interface ISlider {
-    slides:string[],
-}
-
-const Slider = ({slides}: ISlider) => {
+const Slider = ({slides}: ISlideList) => {
 
     const AUTO_PLAY_STOP: number = 1000;
 
@@ -110,7 +107,6 @@ const Slider = ({slides}: ISlider) => {
     }
 
     const handleExit = () => {
-
         console.log("exit");
     }
 
