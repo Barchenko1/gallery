@@ -5,28 +5,31 @@ import SliderContent from "./SliderContent";
 import Slide from "./Slide";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import AutoPlay from "./AutoPlay";
 
 const getWidth = () => window.innerWidth;
 
 interface ISlider {
     slides:string[],
-    autoPlay:number
 }
 
-const Slider = ({slides, autoPlay}: ISlider) => {
+const Slider = ({slides}: ISlider) => {
+
+    const AUTO_PLAY_STOP: number = 1000;
 
     const [state, setState] = useState({
         activeIndex: 0,
         translate: 0,
-        transition: 0.45
+        transition: 0.45,
+        autoPlay: AUTO_PLAY_STOP
     })
 
-    const { activeIndex, translate, transition } = state
+    const { activeIndex, translate, transition, autoPlay } = state
 
-    const autoPlayRef = useRef<any>();
+    const autoPlayRef = useRef<any>(autoPlay);
 
     useEffect(() => {
-        autoPlayRef.current = nextSlide;
+        autoPlayRef.current = autoPlaySlide;
     })
 
     useEffect(() => {
@@ -34,23 +37,48 @@ const Slider = ({slides, autoPlay}: ISlider) => {
             autoPlayRef.current();
         }
 
-        const interval = setInterval(play, autoPlay * 1000)
+        let interval: NodeJS.Timer;
+        if (autoPlay == AUTO_PLAY_STOP) {
+            interval = setInterval(()=>{}, autoPlay * 1000);
+        } else{
+            interval = setInterval(play, autoPlay * 1000);
+        }
         return () => clearInterval(interval);
     }, [autoPlay])
 
-    const nextSlide = () => {
+    const autoPlaySlide = () => {
         if (activeIndex === slides.length - 1) {
             return setState({
                 ...state,
                 translate: 0,
-                activeIndex: 0
+                activeIndex: 0,
+                autoPlay: autoPlay,
             })
         }
 
         setState({
             ...state,
             activeIndex: activeIndex + 1,
-            translate: (activeIndex + 1) * getWidth()
+            translate: (activeIndex + 1) * getWidth(),
+            autoPlay: autoPlay,
+        })
+    }
+
+    const nextSlide = () => {
+        if (activeIndex === slides.length - 1) {
+            return setState({
+                ...state,
+                translate: 0,
+                activeIndex: 0,
+                autoPlay: AUTO_PLAY_STOP,
+            })
+        }
+
+        setState({
+            ...state,
+            activeIndex: activeIndex + 1,
+            translate: (activeIndex + 1) * getWidth(),
+            autoPlay: AUTO_PLAY_STOP,
         })
     }
 
@@ -59,15 +87,25 @@ const Slider = ({slides, autoPlay}: ISlider) => {
             return setState({
                 ...state,
                 translate: (slides.length - 1) * getWidth(),
-                activeIndex: slides.length - 1
+                activeIndex: slides.length - 1,
+                autoPlay: AUTO_PLAY_STOP,
             })
         }
 
         setState({
             ...state,
             activeIndex: activeIndex - 1,
-            translate: (activeIndex - 1) * getWidth()
+            translate: (activeIndex - 1) * getWidth(),
+            autoPlay: AUTO_PLAY_STOP,
         })
+    }
+
+    const handleAutoPlay = (speed: number) => {
+
+        setState({
+            ...state,
+            autoPlay: speed,
+        });
     }
 
     const width:number = getWidth() * slides.length;
@@ -84,6 +122,7 @@ const Slider = ({slides, autoPlay}: ISlider) => {
                     <Slide key={slide + i} content={slide} />
                 ))}
             </SliderContent>
+            <AutoPlay handleClick={handleAutoPlay}/>
             <>
                 <Arrow direction="left" handleClick={prevSlide} />
                 <Arrow direction="right" handleClick={nextSlide} />
