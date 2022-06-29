@@ -1,5 +1,5 @@
 import React from 'react';
-import {ISlide} from "./ITypes";
+import {ISlide} from "../types/IType";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 

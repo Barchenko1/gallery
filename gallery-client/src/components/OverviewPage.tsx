@@ -1,5 +1,5 @@
 import React from 'react';
-import {ISlideList} from "./ITypes";
+import {ISlideList} from "../types/IType";
 import OverviewElement from "./OverviewElement";
 import Slide from "./Slide";
 import SliderContent from "./SliderContent";

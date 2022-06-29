@@ -1,7 +1,7 @@
 import React from 'react';
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import {ISlide} from "./ITypes";
+import {ISlide} from "../types/IType";
 
 const Slide = ({ content }: ISlide) => {
     console.log(content)

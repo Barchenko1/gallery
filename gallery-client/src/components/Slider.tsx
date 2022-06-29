@@ -7,7 +7,7 @@ import Slide from "./Slide";
 import { css } from '@emotion/react';
 import AutoPlay from "./AutoPlay";
 import Exit from "./Exit";
-import {ISlideList} from "./ITypes";
+import {ISlideList} from "../types/IType";
 
 const getWidth = () => window.innerWidth;
 
