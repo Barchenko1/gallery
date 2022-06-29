@@ -6,6 +6,7 @@ import Slide from "./Slide";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import AutoPlay from "./AutoPlay";
+import Exit from "./Exit";
 
 const getWidth = () => window.innerWidth;
 
@@ -108,6 +109,11 @@ const Slider = ({slides}: ISlider) => {
         });
     }
 
+    const handleExit = () => {
+
+        console.log("exit");
+    }
+
     const width:number = getWidth() * slides.length;
 
     return(
@@ -122,6 +128,7 @@ const Slider = ({slides}: ISlider) => {
                     <Slide key={slide + i} content={slide} />
                 ))}
             </SliderContent>
+            <Exit handleClick={handleExit}/>
             <AutoPlay handleClick={handleAutoPlay}/>
             <>
                 <Arrow direction="left" handleClick={prevSlide} />

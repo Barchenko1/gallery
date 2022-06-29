@@ -11,7 +11,7 @@ const AutoPlay = ({handleClick}: IAutoPlay) => {
     return(
         <div css={css`
                   position: absolute;
-                  top: 25px;
+                  top: 50px;
                   width: 100%;
                   display: flex;
                   align-items: center;
