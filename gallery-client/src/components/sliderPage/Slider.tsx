@@ -106,10 +106,6 @@ const Slider = ({slides}: ISlideList) => {
         });
     }
 
-    const handleExit = () => {
-        console.log("exit");
-    }
-
     const width:number = getWidth() * slides.length;
 
     return(
@@ -124,7 +120,7 @@ const Slider = ({slides}: ISlideList) => {
                     <Slide key={slide + i} content={slide} />
                 ))}
             </SliderContent>
-            <Exit handleClick={handleExit}/>
+            <Exit/>
             <AutoPlay handleClick={handleAutoPlay}/>
             <>
                 <Arrow direction="left" handleClick={prevSlide} />

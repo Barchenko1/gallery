@@ -11,7 +11,7 @@ const OverviewPage = ({slides}: ISlideList) => {
             css={OverviewContainer}
         >
             {slides.map((slide, i) => (
-                <OverviewElement key={slide + i} content={slide} />
+                <OverviewElement key={slide + i} content={slide} index={i} />
             ))}
         </div>
     )

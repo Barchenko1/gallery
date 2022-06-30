@@ -4,16 +4,10 @@ import {css} from "@emotion/react";
 import exit from "../../img/exit.png";
 import { Link } from 'react-router-dom';
 
-interface IExit {
-    handleClick:React.MouseEventHandler<HTMLDivElement>
-}
-
-const Exit = ({handleClick}: IExit) => {
+const Exit = () => {
 
     return(
-        <div
-            onClick={handleClick}
-        >
+        <div>
             <Link to="/">
                 <img css={css`
                   position: absolute;
