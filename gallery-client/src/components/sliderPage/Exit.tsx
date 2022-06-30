@@ -1,7 +1,7 @@
 import React from 'react';
 /** @jsxImportSource @emotion/react */
 import {css} from "@emotion/react";
-import exit from "../img/exit.png";
+import exit from "../../img/exit.png";
 import { Link } from 'react-router-dom';
 
 interface IExit {

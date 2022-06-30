@@ -7,7 +7,7 @@ import Slide from "./Slide";
 import { css } from '@emotion/react';
 import AutoPlay from "./AutoPlay";
 import Exit from "./Exit";
-import {ISlideList} from "../types/IType";
+import {ISlideList} from "../../types/IType";
 
 const getWidth = () => window.innerWidth;
 
@@ -36,7 +36,7 @@ const Slider = ({slides}: ISlideList) => {
         }
 
         let interval: NodeJS.Timer;
-        if (autoPlay == AUTO_PLAY_STOP) {
+        if (autoPlay === AUTO_PLAY_STOP) {
             interval = setInterval(()=>{}, autoPlay * 1000);
         } else{
             interval = setInterval(play, autoPlay * 1000);

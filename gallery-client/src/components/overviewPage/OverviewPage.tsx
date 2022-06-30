@@ -1,8 +1,6 @@
 import React from 'react';
-import {ISlideList} from "../types/IType";
+import {ISlideList} from "../../types/IType";
 import OverviewElement from "./OverviewElement";
-import Slide from "./Slide";
-import SliderContent from "./SliderContent";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 
@@ -10,7 +8,7 @@ const OverviewPage = ({slides}: ISlideList) => {
     return(
 
         <div
-            css={SliderCSS}
+            css={OverviewContainer}
         >
             {slides.map((slide, i) => (
                 <OverviewElement key={slide + i} content={slide} />
@@ -19,14 +17,12 @@ const OverviewPage = ({slides}: ISlideList) => {
     )
 }
 
-const SliderCSS = css`
-  position: relative;
-  height: 100vh;
-  width: 100vw;
-  margin: 0 auto;
-  overflow: hidden;
-  display: flex;
-  justify-content: space-evenly;
+const OverviewContainer = css`
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, 200px);
+    grid-auto-rows: 200px;
 `
 
 export default OverviewPage;
