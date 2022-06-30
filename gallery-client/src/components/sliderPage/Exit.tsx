@@ -15,7 +15,7 @@ const Exit = () => {
                   right:25px;
                   width:25px;
                   height:25px;
-                  display:flex;
+                  // display:flex;
                   `}
                     src={exit} />
             </Link>

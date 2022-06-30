@@ -2,6 +2,7 @@ import React from 'react';
 import {ISlide} from "../../types/IType";
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import { useNavigate } from "react-router-dom";
 
 interface IElement {
     index: number,
@@ -10,8 +11,11 @@ interface IElement {
 
 const OverviewElement = ({index, content}: IElement) => {
 
+    const navigate = useNavigate();
+
     const handlePicture = (index: number) => {
         console.log(index);
+        navigate("/slider");
     }
 
     return(

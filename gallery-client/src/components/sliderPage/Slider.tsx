@@ -120,8 +120,10 @@ const Slider = ({slides}: ISlideList) => {
                     <Slide key={slide + i} content={slide} />
                 ))}
             </SliderContent>
-            <Exit/>
-            <AutoPlay handleClick={handleAutoPlay}/>
+            <>
+                <AutoPlay handleClick={handleAutoPlay}/>
+                <Exit/>
+            </>
             <>
                 <Arrow direction="left" handleClick={prevSlide} />
                 <Arrow direction="right" handleClick={nextSlide} />
