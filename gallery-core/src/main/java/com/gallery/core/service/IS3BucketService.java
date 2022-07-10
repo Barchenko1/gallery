@@ -11,6 +11,7 @@ public interface IS3BucketService {
     void addFolder(String name);
     List<PictureModal> getFolderPictureList(String folderName);
     List<PictureModal> getAllPictures();
+    List<PictureModal> getPicturesChunk(int chunk);
     Optional<PictureModal> getPictureByName(String name);
     void deletePictureByName(String name);
     void deleteFolderByName(String folderName);

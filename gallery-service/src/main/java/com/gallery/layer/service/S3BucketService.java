@@ -32,6 +32,11 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
+    public List<PictureModal> getPicturesChunk(int chunk) {
+        return null;
+    }
+
+    @Override
     public Optional<PictureModal> getPictureByName(String name) {
         return Optional.empty();
     }

@@ -1,6 +1,6 @@
 package com.gallery.web.rest;
 
-import com.gallery.core.service.IFolderService;
+import com.gallery.core.service.IFileStoreFolderService;
 import com.gallery.web.dto.CreateRenameFolderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,10 +12,10 @@ import java.util.List;
 
 @RestController
 public class FolderRest {
-    private final IFolderService folderService;
+    private final IFileStoreFolderService folderService;
 
     @Autowired
-    public FolderRest(IFolderService folderService) {
+    public FolderRest(IFileStoreFolderService folderService) {
         this.folderService = folderService;
     }
 

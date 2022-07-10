@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-public interface IFolderService {
+public interface IFileStoreFolderService {
     Optional<File> getFolderByName(String name);
 
     List<String> getFolderList();
