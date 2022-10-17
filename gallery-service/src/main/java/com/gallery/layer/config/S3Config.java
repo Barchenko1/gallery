@@ -5,20 +5,21 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-@Configurable
-@PropertySource("classpath:application.properties")
+@Configuration
+@PropertySource("classpath:application.yaml")
 public class S3Config {
 
-    @Value("${aws.s3.bucket.access.key}")
+    @Value("${cloud.aws.key.access}")
     private String accessKey;
-    @Value("${aws.s3.bucket.secret.key}")
+    @Value("${cloud.aws.key.secret}")
     private String secretKey;
-    @Value("${aws.s3.bucket.region}")
+    @Value("${cloud.aws.region}")
     private String region;
 
     @Bean

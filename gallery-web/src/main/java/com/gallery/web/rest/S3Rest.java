@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,8 +31,8 @@ public class S3Rest {
         return new ResponseEntity<>(bucketService.uploadPicture(file), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ResponseEntity<ByteArrayResource> downloadPicture(@RequestParam String fileName) {
+    @RequestMapping(value = "/download/{fileName}", method = RequestMethod.GET)
+    public ResponseEntity<ByteArrayResource> downloadPicture(@PathVariable String fileName) {
         byte[] data = bucketService.downloadPicture(fileName);
         ByteArrayResource resource = new ByteArrayResource(data);
         return ResponseEntity
@@ -42,8 +43,8 @@ public class S3Rest {
                 .body(resource);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deletePicture(@RequestParam String fileName) {
+    @RequestMapping(value = "/delete/{fileName}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deletePicture(@PathVariable String fileName) {
         return new ResponseEntity<>(bucketService.deletePicture(fileName), HttpStatus.OK);
     }
 }

@@ -7,13 +7,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Objects;
 
 @Service
 public class MultipartFileToFileConverter implements IMultipartFileToFileConverter<MultipartFile, File> {
 
     @Override
     public File convert(MultipartFile multipartFile) {
-        File convertFile = new File(multipartFile.getName());
+        if (multipartFile.getOriginalFilename() == null) {
+            throw new NullPointerException();
+        }
+        File convertFile = new File(multipartFile.getOriginalFilename());
         try (OutputStream out = new FileOutputStream(convertFile)){
             out.write(multipartFile.getBytes());
         } catch (IOException e) {

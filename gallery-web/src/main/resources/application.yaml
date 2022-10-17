@@ -1,0 +1,16 @@
+
+cloud:
+  aws:
+    key:
+      access: "AKIAWSOQPHP24SUV4Y6S"
+      secret: "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"
+    region: "us-east-1"
+    s3:
+      bucket:
+        name: "gallery-anime"
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB

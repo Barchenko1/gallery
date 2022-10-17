@@ -17,16 +17,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application.yaml")
 public class S3BucketService implements IS3BucketService {
 
-    @Value("aws.s3.bucket.name")
+    @Value("${cloud.aws.s3.bucket.name}")
     private String bucketName;
 
-    private AmazonS3 s3Client;
+    private final AmazonS3 s3Client;
+    private final IMultipartFileToFileConverter<MultipartFile, File> multipartFileToFileConverter;
+    private final IInStreamToByteConverter<S3ObjectInputStream, byte[]> inStreamToByteConverter;
 
-    private IMultipartFileToFileConverter<MultipartFile, File> multipartFileToFileConverter;
-    private IInStreamToByteConverter<S3ObjectInputStream, byte[]> inStreamToByteConverter;
+    public S3BucketService(AmazonS3 s3Client, IMultipartFileToFileConverter<MultipartFile, File> multipartFileToFileConverter, IInStreamToByteConverter<S3ObjectInputStream, byte[]> inStreamToByteConverter) {
+        this.s3Client = s3Client;
+        this.multipartFileToFileConverter = multipartFileToFileConverter;
+        this.inStreamToByteConverter = inStreamToByteConverter;
+    }
 
     @Override
     public String uploadPicture(MultipartFile multipartFile) {
