@@ -11,5 +11,5 @@ public class PictureModal {
     private long id;
     private String name;
     private String url;
-    private Date dateOfCreate;
+    private Date lastModified;
 }

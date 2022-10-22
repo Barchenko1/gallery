@@ -1,39 +1,22 @@
 package com.gallery.layer.cli;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.gallery.layer.cli.script.AwsCliScriptExecutor;
+import com.gallery.layer.cli.script.IAwsCliScriptExecutor;
 
-public class AwsCliProcess {
+import static com.gallery.layer.constant.AwsCliCommand.S3_BUCKET_SIZE;
 
-    ProcessBuilder processBuilder = new ProcessBuilder();
+public class AwsCliProcess implements IAwsCliProcess{
 
+    IAwsCliScriptExecutor awsCliCommandExecutor = new AwsCliScriptExecutor();
+
+    @Override
     public boolean isBucketAvailable(String bucket, long limitBytes) {
         return getBucketSize(bucket) < limitBytes;
     }
+
     private double getBucketSize(String bucket) {
-        String script = String.format(
-                "aws s3 ls s3://%s --recursive --human-readable --summarize --profile admin", bucket);
-        processBuilder.command("bash", "-c", script);
-        Pattern pattern = Pattern.compile("   Total Size: " + "\\d" + " Bytes");
-        String result = "";
-        try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.find()) {
-                    result = line.replaceAll("[^0-9]", "");
-                }
-                System.out.println(line);
-            }
-            int exitCode = process.waitFor();
-            System.out.println("\nExited with error code : " + exitCode);
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
+        String script = String.format(S3_BUCKET_SIZE.getCommand(), bucket, "admin");
+        String result = awsCliCommandExecutor.execute(script);
         return Double.parseDouble(result);
     }
 }

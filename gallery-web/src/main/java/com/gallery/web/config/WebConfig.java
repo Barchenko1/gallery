@@ -22,7 +22,7 @@ public class WebConfig {
     private String secretKey;
     @Value("${cloud.aws.region}")
     private String region;
-    @Value("${cloud.aws.s3.bucket.limit.size}")
+    @Value("${cloud.aws.s3.bucket.limit.size.mb}")
     private int bucketLimit;
 
     @Bean

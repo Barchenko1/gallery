@@ -1,19 +1,10 @@
 package com.gallery.layer.service;
 
 import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
-import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.amazonaws.services.cloudwatch.model.MetricDatum;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
-import com.amazonaws.services.cloudwatch.model.PutMetricDataResult;
-import com.amazonaws.services.cloudwatch.model.StandardUnit;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.CreateBucketRequest;
+import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
@@ -29,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import static com.gallery.layer.util.S3BucketUtils.getExpireDate;
 
@@ -42,6 +34,44 @@ public class S3BucketService implements IS3BucketService {
 
     public S3BucketService(AmazonS3 s3Client) {
         this.s3Client = s3Client;
+    }
+
+    @Override
+    public void createBucket(String bucketName) {
+        if (!s3Client.doesBucketExistV2(bucketName)) {
+            CreateBucketRequest createBucketRequest =
+                    new CreateBucketRequest(bucketName, s3Client.getRegion());
+            s3Client.createBucket(createBucketRequest);
+        }
+        waitWhileBucketCreate(bucketName);
+    }
+
+    @Override
+    public void createBucket(String bucketName, String region) {
+        if (!s3Client.doesBucketExistV2(bucketName)) {
+            CreateBucketRequest createBucketRequest =
+                    new CreateBucketRequest(bucketName, region);
+            s3Client.createBucket(createBucketRequest);
+        }
+        waitWhileBucketCreate(bucketName);
+    }
+
+    @Override
+    public void deleteBucket(String bucketName) {
+        if (s3Client.doesBucketExistV2(bucketName)) {
+            DeleteBucketRequest deleteBucketRequest = new DeleteBucketRequest(bucketName);
+            s3Client.deleteBucket(deleteBucketRequest);
+        }
+    }
+
+    @Override
+    public List<Bucket> getBucketList() {
+        return s3Client.listBuckets();
+    }
+
+    @Override
+    public boolean doesObjectExist(String bucketName, String objectKey) {
+        return s3Client.doesObjectExist(bucketName, objectKey);
     }
 
     @Override
@@ -73,18 +103,24 @@ public class S3BucketService implements IS3BucketService {
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, folderName, "");
         s3Client.putObject(putObjectRequest);
     }
-
-    public S3ObjectSummary getObjectSummary(String bucketName, String objectKey) {
+    @Override
+    public S3ObjectSummary getS3ObjectSummary(String bucketName, String objectKey) {
         ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
                 .withBucketName(bucketName)
                 .withPrefix(objectKey);
         ListObjectsV2Result listObjectsV2Result = s3Client.listObjectsV2(listObjectsV2Request);
         S3ObjectSummary s3ObjectSummary = null;
+        for (S3ObjectSummary objectSummary: listObjectsV2Result.getObjectSummaries()) {
+            s3ObjectSummary = objectSummary;
+            break;
+        }
 
-        S3Object s3Object = s3Client.getObject(bucketName, objectKey);
-//        S3ObjectSummary s3ObjectSummary = new S3ObjectSummary();
-//        s3ObjectSummary.getLastModified();
         return s3ObjectSummary;
+    }
+
+    @Override
+    public S3Object getS3Object(String bucketName, String objectKey) {
+        return s3Client.getObject(bucketName, objectKey);
     }
 
     @Override
@@ -107,5 +143,19 @@ public class S3BucketService implements IS3BucketService {
         return url.toString();
     }
 
-
+    private void waitWhileBucketCreate(String bucketName) {
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + 60 * 1000;
+        while (!s3Client.doesBucketExistV2(bucketName) && endTime > System.currentTimeMillis()) {
+            try {
+//                LOG.info("Waiting for Amazon S3 to create bucket " + bucketName);
+                Thread.sleep(1000 * 10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException();
+            }
+        }
+        if (!s3Client.doesBucketExistV2(bucketName)) {
+            throw new IllegalStateException("Could not create bucket " + bucketName);
+        }
+    }
 }

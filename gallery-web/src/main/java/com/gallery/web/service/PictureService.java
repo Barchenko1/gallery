@@ -1,11 +1,13 @@
 package com.gallery.web.service;
 
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.gallery.core.modal.PictureModal;
 import com.gallery.layer.service.IS3MultipleBucketService;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,10 +29,10 @@ public class PictureService implements IPictureService {
 
     @Override
     public PictureModal getPicture(String objectKey) {
-
+        S3ObjectSummary s3ObjectSummary = s3MultipleBucketService.getS3ObjectSummary(objectKey);
         String url = s3MultipleBucketService.getFileUrl(objectKey);
 
-        return setupPictureModal("", url);
+        return setupPictureModal(s3ObjectSummary.getKey(), url, s3ObjectSummary.getLastModified());
     }
 
     @Override
@@ -44,10 +46,11 @@ public class PictureService implements IPictureService {
         return String.format("file %s success deleted", fileName);
     }
 
-    private PictureModal setupPictureModal(String name, String url) {
+    private PictureModal setupPictureModal(String name, String url, Date lastModified) {
         return PictureModal.builder()
                 .name(name)
                 .url(url)
+                .lastModified(lastModified)
                 .build();
     }
 
