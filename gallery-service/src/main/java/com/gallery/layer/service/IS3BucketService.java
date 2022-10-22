@@ -23,7 +23,7 @@ public interface IS3BucketService {
     void uploadFolder(String bucket, String folderName);
     void uploadFileToFolder(String bucket, String folder, String objectKey);
     byte[] downloadFile(String bucketName, String objectKey);
-    void moveFolder(String bucketName, String folderPath, String destinationPath);
+    void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath);
     void renameFolder(String bucketName, String folderPath, String newFolderPath);
 //    List<?> getFolderFileList(String folderName);
 //    List<?> getFileChunk(String folderName, int chunk);

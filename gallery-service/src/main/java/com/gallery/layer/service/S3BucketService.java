@@ -82,7 +82,7 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void moveFolder(String bucketName, String folderPath, String destinationPath) {
+    public void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath) {
 
     }
 

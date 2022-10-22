@@ -13,12 +13,12 @@ public interface IS3MultipleBucketService {
     S3ObjectSummary getS3ObjectSummary(String objectKey);
     S3Object getS3Object(String objectKey);
     String getFileUrl(String objectKey);
-    public byte[] downloadFile(String objectKey);
+    byte[] downloadFile(String objectKey);
     void uploadFile(MultipartFile multipartFile);
     void uploadEmptyFolder(String folderName);
     void uploadFolder(String folderName);
     void uploadFileToFolder(String folder, String objectKey);
-    void moveFolder(String folderPath, String destinationPath);
+    void copyFolderAndRemove(String folderPath, String destinationPath);
     void renameFolder(String folderPath, String newFolderPath);
 
 }

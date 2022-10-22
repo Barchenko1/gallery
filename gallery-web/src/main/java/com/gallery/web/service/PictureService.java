@@ -28,6 +28,21 @@ public class PictureService implements IPictureService {
     }
 
     @Override
+    public void uploadEmptyFolder(String folderName) {
+
+    }
+
+    @Override
+    public void uploadFolder(String folderName) {
+
+    }
+
+    @Override
+    public void uploadPictureFolder(String folderName, String objectKey) {
+
+    }
+
+    @Override
     public PictureModal getPicture(String objectKey) {
         S3ObjectSummary s3ObjectSummary = s3MultipleBucketService.getS3ObjectSummary(objectKey);
         String url = s3MultipleBucketService.getFileUrl(objectKey);
@@ -46,6 +61,21 @@ public class PictureService implements IPictureService {
         return String.format("file %s success deleted", fileName);
     }
 
+    @Override
+    public void deleteFolder(String objectKey) {
+
+    }
+
+    @Override
+    public void copyFolderAndRemove(String folderPath, String destinationPath) {
+
+    }
+
+    @Override
+    public void renameFolder(String folderPath, String newFolderPath) {
+
+    }
+
     private PictureModal setupPictureModal(String name, String url, Date lastModified) {
         return PictureModal.builder()
                 .name(name)
@@ -54,43 +84,4 @@ public class PictureService implements IPictureService {
                 .build();
     }
 
-    @Override
-    public void addPictureToFolder(PictureModal pictureModal, String folderName) {
-
-    }
-
-    @Override
-    public void addFolder(String name) {
-
-    }
-
-    @Override
-    public List<PictureModal> getFolderPictureList(String folderName) {
-        return null;
-    }
-
-    @Override
-    public List<PictureModal> getAllPictures() {
-        return null;
-    }
-
-    @Override
-    public List<PictureModal> getPicturesChunk(int chunk) {
-        return null;
-    }
-
-    @Override
-    public Optional<PictureModal> getPictureByName(String name) {
-        return Optional.empty();
-    }
-
-    @Override
-    public void deletePictureByName(String name) {
-
-    }
-
-    @Override
-    public void deleteFolderByName(String folderName) {
-
-    }
 }

@@ -46,7 +46,7 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
-    public void moveFolder(String folderPath, String destinationPath) {
+    public void copyFolderAndRemove(String folderPath, String destinationPath) {
 
     }
 
