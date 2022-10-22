@@ -1,13 +1,13 @@
-
 cloud:
   aws:
     key:
-      access: "AKIAWSOQPHP24SUV4Y6S"
-      secret: "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"
-    region: "us-east-1"
+      access: ""
+      secret: ""
+    region: ""
     s3:
       bucket:
-        name: "gallery-anime"
+        limit:
+          size: "10"
 
 spring:
   servlet:
