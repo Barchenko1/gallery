@@ -9,8 +9,8 @@ public class AwsCliProcess {
 
     ProcessBuilder processBuilder = new ProcessBuilder();
 
-    public boolean isBucketAvailable(String bucket, int limit) {
-        return getBucketSize(bucket) < limit;
+    public boolean isBucketAvailable(String bucket, long limitBytes) {
+        return getBucketSize(bucket) < limitBytes;
     }
     private double getBucketSize(String bucket) {
         String script = String.format(

@@ -21,8 +21,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.gallery.layer.util.IInStreamToByteConverter;
-import com.gallery.layer.util.IMultipartFileToFileConverter;
+import com.gallery.layer.util.IConverter;
 import com.gallery.layer.util.InStreamToByteConverter;
 import com.gallery.layer.util.MultipartFileToFileConverter;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,9 +35,9 @@ import static com.gallery.layer.util.S3BucketUtils.getExpireDate;
 public class S3BucketService implements IS3BucketService {
 
     private final AmazonS3 s3Client;
-    private final IMultipartFileToFileConverter<MultipartFile, File> multipartFileToFileConverter =
+    private final IConverter<MultipartFile, File> multipartFileToFileConverter =
             new MultipartFileToFileConverter();
-    private final IInStreamToByteConverter<S3ObjectInputStream, byte[]> inStreamToByteConverter =
+    private final IConverter<S3ObjectInputStream, byte[]> inStreamToByteConverter =
             new InStreamToByteConverter();
 
     public S3BucketService(AmazonS3 s3Client) {

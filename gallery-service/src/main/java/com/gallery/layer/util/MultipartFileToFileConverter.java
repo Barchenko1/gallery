@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class MultipartFileToFileConverter implements IMultipartFileToFileConverter<MultipartFile, File> {
+public class MultipartFileToFileConverter implements IConverter<MultipartFile, File> {
 
     @Override
     public File convert(MultipartFile multipartFile) {

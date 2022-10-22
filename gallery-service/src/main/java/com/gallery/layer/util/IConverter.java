@@ -1,5 +1,5 @@
 package com.gallery.layer.util;
 
-public interface IInStreamToByteConverter<T, D>{
+public interface IConverter<T, D> {
     D convert(T t);
 }

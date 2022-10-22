@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-public class InStreamToByteConverter implements IInStreamToByteConverter<S3ObjectInputStream, byte[]> {
+public class InStreamToByteConverter implements IConverter<S3ObjectInputStream, byte[]> {
 
     @Override
     public byte[] convert(S3ObjectInputStream s3ObjectInputStream) {

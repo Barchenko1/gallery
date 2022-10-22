@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.gallery.layer.config.S3Config;
 import com.gallery.layer.service.IS3MultipleBucketService;
 import com.gallery.layer.service.S3MultipleBucketService;
+import com.gallery.layer.util.IConverter;
+import com.gallery.web.util.MegabyteToByteConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +33,7 @@ public class WebConfig {
 
     @Bean
     public IS3MultipleBucketService s3MultipleBucketService() {
-        return new S3MultipleBucketService(s3Client(), bucketLimit);
+        IConverter<Integer, Long> megabyteToByteConverter = new MegabyteToByteConverter();
+        return new S3MultipleBucketService(s3Client(), megabyteToByteConverter.convert(bucketLimit));
     }
 }
