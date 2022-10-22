@@ -12,7 +12,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.amazonaws.services.s3.transfer.MultipleFileUpload;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
@@ -58,6 +57,11 @@ public class S3BucketService implements IS3BucketService {
             s3Client.createBucket(createBucketRequest);
         }
         waitWhileBucketCreate(bucketName);
+    }
+
+    @Override
+    public void cleanUpBucket(String bucketName) {
+
     }
 
     @Override

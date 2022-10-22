@@ -32,7 +32,7 @@ public class S3Rest {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity<String> uploadPictures(@RequestParam(value = "folderPath") String folderPath,
                                                  @RequestParam(value = "files") List<MultipartFile> files) {
-        return new ResponseEntity<>(pictureService.uploadPicture(folderPath, files), HttpStatus.OK);
+        return new ResponseEntity<>(pictureService.uploadFileMultipart(folderPath, files), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)

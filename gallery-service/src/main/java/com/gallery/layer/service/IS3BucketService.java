@@ -10,6 +10,7 @@ import java.util.List;
 public interface IS3BucketService {
     void createBucket(String bucketName);
     void createBucket(String bucketName, String region);
+    void cleanUpBucket(String bucketName);
     void deleteBucket(String bucketName);
     void deleteFile(String bucketName, String objectKey);
     void deleteFolder(String bucketName, String objectKey);

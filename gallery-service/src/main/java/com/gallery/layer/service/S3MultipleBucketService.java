@@ -24,15 +24,17 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
-    public void uploadFiles(String folderPath, List<MultipartFile> multipartFile) {
-        getFreeBucket()
+    public void uploadFiles(String folderPath, List<MultipartFile> multipartFileList) {
+        long filesSize = calculateLimitSize(getFilesSizeSum(multipartFileList));
+        getFreeBucket(filesSize)
                 .findFirst()
-                .ifPresent(bucket -> s3BucketService.uploadFiles(bucket.getName(), folderPath, multipartFile));
+                .ifPresent(bucket -> s3BucketService.uploadFiles(bucket.getName(), folderPath, multipartFileList));
     }
 
     @Override
     public void uploadFilesMultipart(String folderPath, List<MultipartFile> multipartFileList) {
-        getFreeBucket()
+        long filesSize = calculateLimitSize(getFilesSizeSum(multipartFileList));
+        getFreeBucket(filesSize)
                 .findFirst()
                 .ifPresent(bucket -> s3BucketService.uploadFilesMultipart(bucket.getName(), folderPath, multipartFileList));
     }
@@ -110,13 +112,24 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
                         String.format("s3Object with objectKey: %s wasn't found", objectKey)));
     }
 
-    private Stream<Bucket> getFreeBucket() {
+    private Stream<Bucket> getFreeBucket(long limit) {
         return bucketList.stream()
-                .filter(bucket -> awsCliProcess.isBucketAvailable(bucket.getName(), bucketLimit));
+                .filter(bucket -> awsCliProcess.isBucketAvailable(bucket.getName(), limit));
     }
 
     private Stream<Bucket> getFilteredBucket(String objectKey) {
         return bucketList.stream()
                 .filter(bucket -> s3BucketService.doesObjectExist(bucket.getName(), objectKey));
+    }
+
+    private long calculateLimitSize(long filesSize) {
+        return bucketLimit - filesSize;
+    }
+
+    private long getFilesSizeSum(List<MultipartFile> multipartFileList) {
+        return multipartFileList.stream()
+                .map(MultipartFile::getSize)
+                .reduce(Long::sum)
+                .orElseThrow(() -> new RuntimeException(""));
     }
 }
