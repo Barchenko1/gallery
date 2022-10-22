@@ -82,10 +82,25 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
+    public void moveFolder(String bucketName, String folderPath, String destinationPath) {
+
+    }
+
+    @Override
+    public void renameFolder(String bucketName, String folderPath, String newFolderPath) {
+
+    }
+
+    @Override
     public void uploadFile(String bucketName, MultipartFile multipartFile) {
         File file = multipartFileToFileConverter.convert(multipartFile);
         s3Client.putObject(new PutObjectRequest(bucketName, file.getName(), file));
         file.delete();
+    }
+
+    @Override
+    public void uploadEmptyFolder(String bucket, String folderName) {
+
     }
 
     @Override
@@ -94,15 +109,21 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void addFileToFolder(String bucket, String prefix, String objectKey) {
+    public void deleteFolder(String bucketName, String objectKey) {
 
     }
 
     @Override
-    public void addFolder(String bucket, String folderName) {
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, folderName, "");
+    public void uploadFolder(String bucketName, String folderName) {
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName, "");
         s3Client.putObject(putObjectRequest);
     }
+
+    @Override
+    public void uploadFileToFolder(String bucket, String folder, String objectKey) {
+
+    }
+
     @Override
     public S3ObjectSummary getS3ObjectSummary(String bucketName, String objectKey) {
         ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()

@@ -31,6 +31,31 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
+    public void uploadEmptyFolder(String folderName) {
+
+    }
+
+    @Override
+    public void uploadFolder(String folderName) {
+
+    }
+
+    @Override
+    public void uploadFileToFolder(String folder, String objectKey) {
+
+    }
+
+    @Override
+    public void moveFolder(String folderPath, String destinationPath) {
+
+    }
+
+    @Override
+    public void renameFolder(String folderPath, String newFolderPath) {
+
+    }
+
+    @Override
     public String getFileUrl(String objectKey) {
         return getFilteredBucket(objectKey)
                 .map(bucket -> s3BucketService.getFileUrl(bucket.getName(), objectKey))
@@ -49,10 +74,30 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
+    public void createBucket(String bucketName) {
+        s3BucketService.createBucket(bucketName);
+    }
+
+    @Override
+    public void createBucket(String bucketName, String region) {
+        s3BucketService.createBucket(bucketName, region);
+    }
+
+    @Override
+    public void deleteBucket(String bucketName) {
+        s3BucketService.deleteBucket(bucketName);
+    }
+
+    @Override
     public void deleteFile(String objectKey) {
         getFilteredBucket(objectKey)
                 .findFirst()
                 .ifPresent(bucket -> s3BucketService.deleteFile(bucket.getName(), objectKey));
+    }
+
+    @Override
+    public void deleteFolder(String objectKey) {
+
     }
 
     @Override

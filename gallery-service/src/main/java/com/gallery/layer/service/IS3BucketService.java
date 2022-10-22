@@ -6,27 +6,25 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IS3BucketService {
     void createBucket(String bucketName);
     void createBucket(String bucketName, String region);
     void deleteBucket(String bucketName);
+    void deleteFile(String bucketName, String objectKey);
+    void deleteFolder(String bucketName, String objectKey);
     List<Bucket> getBucketList();
-    boolean doesObjectExist(String bucketName, String objectKey);
-    void uploadFile(String bucket, MultipartFile multipartFile);
-    byte[] downloadFile(String bucket, String objectKey);
-    String getFileUrl(String bucketName, String objectKey);
-    void deleteFile(String bucket, String objectKey);
     S3ObjectSummary getS3ObjectSummary(String bucketName, String objectKey);
     S3Object getS3Object(String bucketName, String objectKey);
-    void addFileToFolder(String bucket, String prefix, String objectKey);
-    void addFolder(String bucket, String folderName);
-//    List<PictureModal> getFolderPictureList(String folderName);
-//    List<PictureModal> getAllPictures();
-//    List<PictureModal> getPicturesChunk(int chunk);
-//    Optional<PictureModal> getPictureByName(String name);
-//    void deletePictureByName(String name);
-//    void deleteFolderByName(String folderName);
-
+    String getFileUrl(String bucketName, String objectKey);
+    boolean doesObjectExist(String bucketName, String objectKey);
+    void uploadFile(String bucketName, MultipartFile multipartFile);
+    void uploadEmptyFolder(String bucket, String folderName);
+    void uploadFolder(String bucket, String folderName);
+    void uploadFileToFolder(String bucket, String folder, String objectKey);
+    byte[] downloadFile(String bucketName, String objectKey);
+    void moveFolder(String bucketName, String folderPath, String destinationPath);
+    void renameFolder(String bucketName, String folderPath, String newFolderPath);
+//    List<?> getFolderFileList(String folderName);
+//    List<?> getFileChunk(String folderName, int chunk);
 }
