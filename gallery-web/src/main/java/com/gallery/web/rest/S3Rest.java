@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.gallery.web.util.Constant.CONTENT_DISPOSITION;
-import static com.gallery.web.util.Constant.CONTENT_TYPE;
+import java.util.List;
+
+import static com.gallery.web.util.Constants.CONTENT_DISPOSITION;
+import static com.gallery.web.util.Constants.CONTENT_TYPE;
 
 @RestController
 public class S3Rest {
@@ -28,29 +30,31 @@ public class S3Rest {
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public ResponseEntity<String> uploadPicture(@RequestParam(value = "file") MultipartFile file) {
-        return new ResponseEntity<>(pictureService.uploadPicture(file), HttpStatus.OK);
+    public ResponseEntity<String> uploadPictures(@RequestParam(value = "folderPath") String folderPath,
+                                                 @RequestParam(value = "files") List<MultipartFile> files) {
+        return new ResponseEntity<>(pictureService.uploadPicture(folderPath, files), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/download/{fileName}", method = RequestMethod.GET)
-    public ResponseEntity<ByteArrayResource> downloadPicture(@PathVariable String fileName) {
-        byte[] data = pictureService.downloadPicture(fileName);
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public ResponseEntity<ByteArrayResource> downloadPicture(@RequestParam(value = "objectKey") String objectKey) {
+        byte[] data = pictureService.downloadPicture(objectKey);
         ByteArrayResource resource = new ByteArrayResource(data);
         return ResponseEntity
                 .ok()
                 .contentLength(data.length)
                 .header(CONTENT_TYPE, ContentType.APPLICATION_OCTET_STREAM.getMimeType())
-                .header(CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .header(CONTENT_DISPOSITION, "attachment; filename=\""
+                        + objectKey.substring(objectKey.lastIndexOf("/")) + "\"")
                 .body(resource);
     }
 
-    @RequestMapping(value = "/view/{objectKey}", method = RequestMethod.GET)
-    public ResponseEntity<PictureModal> getPicture(@PathVariable String objectKey) {
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public ResponseEntity<PictureModal> getPicture(@RequestParam(value = "objectKey") String objectKey) {
         return new ResponseEntity<>(pictureService.getPicture(objectKey), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{fileName}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deletePicture(@PathVariable String fileName) {
-        return new ResponseEntity<>(pictureService.deletePicture(fileName), HttpStatus.OK);
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deletePicture(@RequestParam(value = "objectKey") String objectKey) {
+        return new ResponseEntity<>(pictureService.deletePicture(objectKey), HttpStatus.OK);
     }
 }

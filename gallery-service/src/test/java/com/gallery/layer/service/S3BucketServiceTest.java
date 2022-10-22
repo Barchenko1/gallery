@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 
 public class S3BucketServiceTest {
 
-    IS3BucketService s3BucketService;
+    private static IS3BucketService s3BucketService;
 
     @BeforeAll
-    public void setupTest() {
+    public static void setupTest() {
         S3Config s3Config = new S3Config();
 //        s3BucketService = new S3BucketService(s3Config.s3Client());
     }

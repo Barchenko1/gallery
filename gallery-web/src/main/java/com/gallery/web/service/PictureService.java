@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @PropertySource("classpath:application.yaml")
@@ -22,24 +21,15 @@ public class PictureService implements IPictureService {
     }
 
     @Override
-    public String uploadPicture(MultipartFile multipartFile) {
-        s3MultipleBucketService.uploadFile(multipartFile);
-        return String.format("file %s success upload", multipartFile.getOriginalFilename());
+    public String uploadPicture(String folderPath, List<MultipartFile> multipartFile) {
+        s3MultipleBucketService.uploadFiles(folderPath, multipartFile);
+        return String.format("files success upload to %s", folderPath);
     }
 
     @Override
-    public void uploadEmptyFolder(String folderName) {
-
-    }
-
-    @Override
-    public void uploadFolder(String folderName) {
-
-    }
-
-    @Override
-    public void uploadPictureFolder(String folderName, String objectKey) {
-
+    public String uploadFileMultipart(String folderPath, List<MultipartFile> multipartFileList) {
+        s3MultipleBucketService.uploadFilesMultipart(folderPath, multipartFileList);
+        return String.format("files success upload to %s", folderPath);
     }
 
     @Override
@@ -76,9 +66,9 @@ public class PictureService implements IPictureService {
 
     }
 
-    private PictureModal setupPictureModal(String name, String url, Date lastModified) {
+    private PictureModal setupPictureModal(String objectKey, String url, Date lastModified) {
         return PictureModal.builder()
-                .name(name)
+                .objectKey(objectKey)
                 .url(url)
                 .lastModified(lastModified)
                 .build();

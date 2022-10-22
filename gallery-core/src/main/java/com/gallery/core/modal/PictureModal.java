@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @Builder
 public class PictureModal {
-    private String name;
+    private String objectKey;
     private String url;
     private Date lastModified;
 }

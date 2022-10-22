@@ -18,10 +18,9 @@ public interface IS3BucketService {
     S3Object getS3Object(String bucketName, String objectKey);
     String getFileUrl(String bucketName, String objectKey);
     boolean doesObjectExist(String bucketName, String objectKey);
-    void uploadFile(String bucketName, MultipartFile multipartFile);
-    void uploadEmptyFolder(String bucket, String folderName);
-    void uploadFolder(String bucket, String folderName);
-    void uploadFileToFolder(String bucket, String folder, String objectKey);
+    void uploadFiles(String bucketName, String folderPath, List<MultipartFile> multipartFileList);
+    void uploadFolder(String bucketName, String folderName);
+    void uploadFilesMultipart(String bucketName, String folderPath, List<MultipartFile> multipartFileList);
     byte[] downloadFile(String bucketName, String objectKey);
     void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath);
     void renameFolder(String bucketName, String folderPath, String newFolderPath);

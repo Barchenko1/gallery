@@ -12,6 +12,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.transfer.MultipleFileUpload;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.Upload;
 import com.gallery.layer.util.IConverter;
 import com.gallery.layer.util.InStreamToByteConverter;
 import com.gallery.layer.util.MultipartFileToFileConverter;
@@ -92,15 +96,45 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void uploadFile(String bucketName, MultipartFile multipartFile) {
-        File file = multipartFileToFileConverter.convert(multipartFile);
-        s3Client.putObject(new PutObjectRequest(bucketName, file.getName(), file));
-        file.delete();
+    public void uploadFiles(String bucketName, String folderPath, List<MultipartFile> multipartFileList) {
+        multipartFileList.forEach(multipartFile -> {
+            File file = multipartFileToFileConverter.convert(multipartFile);
+            s3Client.putObject(new PutObjectRequest(bucketName, file.getName(), file));
+            file.delete();
+        });
     }
 
     @Override
-    public void uploadEmptyFolder(String bucket, String folderName) {
+    public void uploadFolder(String bucket, String folderName) {
+        TransferManager transferManager = TransferManagerBuilder.standard()
+                .withS3Client(s3Client)
+                .build();
 
+//        MultipleFileUpload upload = transferManager.uploadDirectory(bucket,
+//                "BuildNumber#1", "/vfp", true);
+    }
+
+    @Override
+    public void uploadFilesMultipart(String bucketName, String folderPath, List<MultipartFile> multipartFileList) {
+        multipartFileList.forEach(multipartFile -> {
+            File file = multipartFileToFileConverter.convert(multipartFile);
+            TransferManager transferManager = TransferManagerBuilder.standard()
+                    .withS3Client(s3Client)
+                    .build();
+
+            // TransferManager processes all transfers asynchronously,
+            // so this call returns immediately.
+            Upload upload = transferManager.upload(bucketName, folderPath + file.getName(), file);
+            System.out.println("Object upload started");
+
+            // Optionally, wait for the upload to finish before continuing.
+            try {
+                upload.waitForCompletion();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            file.delete();
+        });
     }
 
     @Override
@@ -110,17 +144,6 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void deleteFolder(String bucketName, String objectKey) {
-
-    }
-
-    @Override
-    public void uploadFolder(String bucketName, String folderName) {
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName, "");
-        s3Client.putObject(putObjectRequest);
-    }
-
-    @Override
-    public void uploadFileToFolder(String bucket, String folder, String objectKey) {
 
     }
 

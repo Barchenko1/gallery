@@ -24,25 +24,17 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
-    public void uploadFile(MultipartFile multipartFile) {
+    public void uploadFiles(String folderPath, List<MultipartFile> multipartFile) {
         getFreeBucket()
                 .findFirst()
-                .ifPresent(bucket -> s3BucketService.uploadFile(bucket.getName(), multipartFile));
+                .ifPresent(bucket -> s3BucketService.uploadFiles(bucket.getName(), folderPath, multipartFile));
     }
 
     @Override
-    public void uploadEmptyFolder(String folderName) {
-
-    }
-
-    @Override
-    public void uploadFolder(String folderName) {
-
-    }
-
-    @Override
-    public void uploadFileToFolder(String folder, String objectKey) {
-
+    public void uploadFilesMultipart(String folderPath, List<MultipartFile> multipartFileList) {
+        getFreeBucket()
+                .findFirst()
+                .ifPresent(bucket -> s3BucketService.uploadFilesMultipart(bucket.getName(), folderPath, multipartFileList));
     }
 
     @Override
