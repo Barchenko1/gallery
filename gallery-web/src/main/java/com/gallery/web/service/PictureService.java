@@ -7,6 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -21,14 +22,22 @@ public class PictureService implements IPictureService {
     }
 
     @Override
-    public String uploadPicture(String folderPath, List<MultipartFile> multipartFile) {
-        s3MultipleBucketService.uploadFiles(folderPath, multipartFile);
+    public String uploadPictures(String folderPath, List<MultipartFile> multipartFileList) {
+        s3MultipleBucketService.setUploadFilesSize(getFilesSizeSum(multipartFileList));
+        multipartFileList.forEach(multipartFile -> {
+            s3MultipleBucketService.uploadMultipartFile(folderPath, multipartFile);
+        });
+
         return String.format("files success upload to %s", folderPath);
     }
 
     @Override
-    public String uploadFileMultipart(String folderPath, List<MultipartFile> multipartFileList) {
-        s3MultipleBucketService.uploadFilesMultipart(folderPath, multipartFileList);
+    public String uploadPicturesAsync(String folderPath, List<MultipartFile> multipartFileList) {
+        s3MultipleBucketService.setUploadFilesSize(getFilesSizeSum(multipartFileList));
+        multipartFileList.forEach(multipartFile -> {
+            s3MultipleBucketService.uploadMultipartFileAsync(folderPath, multipartFile);
+        });
+
         return String.format("files success upload to %s", folderPath);
     }
 
@@ -72,6 +81,13 @@ public class PictureService implements IPictureService {
                 .url(url)
                 .lastModified(lastModified)
                 .build();
+    }
+
+    private long getFilesSizeSum(List<MultipartFile> multipartFileList) {
+        return multipartFileList.stream()
+                .map(MultipartFile::getSize)
+                .reduce(Long::sum)
+                .orElseThrow(() -> new RuntimeException(""));
     }
 
 }

@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 public interface IS3BucketService {
@@ -19,9 +20,12 @@ public interface IS3BucketService {
     S3Object getS3Object(String bucketName, String objectKey);
     String getFileUrl(String bucketName, String objectKey);
     boolean doesObjectExist(String bucketName, String objectKey);
-    void uploadFiles(String bucketName, String folderPath, List<MultipartFile> multipartFileList);
+    boolean doesBucketExist(String bucketName);
+    void uploadFile(String bucketName, String folderPath, File file);
     void uploadFolder(String bucketName, String folderName);
-    void uploadFilesMultipart(String bucketName, String folderPath, List<MultipartFile> multipartFileList);
+    void uploadFileAsync(String bucketName, String folderPath, File file);
+    void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile);
+    void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile);
     byte[] downloadFile(String bucketName, String objectKey);
     void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath);
     void renameFolder(String bucketName, String folderPath, String newFolderPath);

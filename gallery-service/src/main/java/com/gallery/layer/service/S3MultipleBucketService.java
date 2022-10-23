@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.gallery.layer.cli.AwsCliProcess;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -15,6 +16,7 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     private final AwsCliProcess awsCliProcess;
     private final S3BucketService s3BucketService;
     private final List<Bucket> bucketList;
+    private long uploadFilesSize;
 
     public S3MultipleBucketService(AmazonS3 s3Client, long bucketLimit) {
         this.s3BucketService = new S3BucketService(s3Client);
@@ -24,19 +26,42 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
-    public void uploadFiles(String folderPath, List<MultipartFile> multipartFileList) {
-        long filesSize = calculateLimitSize(getFilesSizeSum(multipartFileList));
-        getFreeBucket(filesSize)
-                .findFirst()
-                .ifPresent(bucket -> s3BucketService.uploadFiles(bucket.getName(), folderPath, multipartFileList));
+    public void setUploadFilesSize(long uploadFilesSize) {
+        this.uploadFilesSize = uploadFilesSize;
     }
 
     @Override
-    public void uploadFilesMultipart(String folderPath, List<MultipartFile> multipartFileList) {
-        long filesSize = calculateLimitSize(getFilesSizeSum(multipartFileList));
-        getFreeBucket(filesSize)
+    public void uploadFile(String folderPath, File file) {
+        getFreeBucket(calculateLimitSize())
                 .findFirst()
-                .ifPresent(bucket -> s3BucketService.uploadFilesMultipart(bucket.getName(), folderPath, multipartFileList));
+                .ifPresent(bucket -> s3BucketService.uploadFile(bucket.getName(), folderPath, file));
+    }
+
+    @Override
+    public void uploadFileAsync(String folderPath, File file) {
+        getFreeBucket(calculateLimitSize())
+                .findFirst()
+                .ifPresent(bucket -> {
+                    s3BucketService.uploadFileAsync(bucket.getName(), folderPath, file);
+                });
+    }
+
+    @Override
+    public void uploadMultipartFile(String folderPath, MultipartFile multipartFile) {
+        getFreeBucket(calculateLimitSize())
+                .findFirst()
+                .ifPresent(bucket -> {
+                    s3BucketService.uploadMultipartFile(bucket.getName(), folderPath, multipartFile);
+                });
+    }
+
+    @Override
+    public void uploadMultipartFileAsync(String folderPath, MultipartFile multipartFile) {
+        getFreeBucket(calculateLimitSize())
+                .findFirst()
+                .ifPresent(bucket -> {
+                    s3BucketService.uploadMultipartFileAsync(bucket.getName(), folderPath, multipartFile);
+                });
     }
 
     @Override
@@ -122,14 +147,8 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
                 .filter(bucket -> s3BucketService.doesObjectExist(bucket.getName(), objectKey));
     }
 
-    private long calculateLimitSize(long filesSize) {
-        return bucketLimit - filesSize;
+    private long calculateLimitSize() {
+        return bucketLimit - uploadFilesSize;
     }
 
-    private long getFilesSizeSum(List<MultipartFile> multipartFileList) {
-        return multipartFileList.stream()
-                .map(MultipartFile::getSize)
-                .reduce(Long::sum)
-                .orElseThrow(() -> new RuntimeException(""));
-    }
 }

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +31,7 @@ public class S3Rest {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity<String> uploadPictures(@RequestParam(value = "folderPath") String folderPath,
                                                  @RequestParam(value = "files") List<MultipartFile> files) {
-        return new ResponseEntity<>(pictureService.uploadFileMultipart(folderPath, files), HttpStatus.OK);
+        return new ResponseEntity<>(pictureService.uploadPicturesAsync(folderPath, files), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)

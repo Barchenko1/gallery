@@ -83,6 +83,11 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
+    public boolean doesBucketExist(String bucketName) {
+        return s3Client.doesBucketExistV2(bucketName);
+    }
+
+    @Override
     public byte[] downloadFile(String bucket, String fileName) {
         S3Object s3Object = s3Client.getObject(bucket, fileName);
         S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
@@ -100,12 +105,8 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void uploadFiles(String bucketName, String folderPath, List<MultipartFile> multipartFileList) {
-        multipartFileList.forEach(multipartFile -> {
-            File file = multipartFileToFileConverter.convert(multipartFile);
-            s3Client.putObject(new PutObjectRequest(bucketName, file.getName(), file));
-            file.delete();
-        });
+    public void uploadFile(String bucketName, String folderPath, File file) {
+        uploadFileToBucket(bucketName, folderPath, file);
     }
 
     @Override
@@ -119,26 +120,22 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void uploadFilesMultipart(String bucketName, String folderPath, List<MultipartFile> multipartFileList) {
-        multipartFileList.forEach(multipartFile -> {
-            File file = multipartFileToFileConverter.convert(multipartFile);
-            TransferManager transferManager = TransferManagerBuilder.standard()
-                    .withS3Client(s3Client)
-                    .build();
+    public void uploadFileAsync(String bucketName, String folderPath, File file) {
+        uploadFileToBucketAsync(bucketName, folderPath, file);
+    }
 
-            // TransferManager processes all transfers asynchronously,
-            // so this call returns immediately.
-            Upload upload = transferManager.upload(bucketName, folderPath + file.getName(), file);
-            System.out.println("Object upload started");
+    @Override
+    public void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile) {
+        File file = multipartFileToFileConverter.convert(multipartFile);
+        uploadFileToBucket(bucketName, folderPath, file);
+        file.delete();
+    }
 
-            // Optionally, wait for the upload to finish before continuing.
-            try {
-                upload.waitForCompletion();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            file.delete();
-        });
+    @Override
+    public void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile) {
+        File file = multipartFileToFileConverter.convert(multipartFile);
+        uploadFileToBucketAsync(bucketName, folderPath, file);
+        file.delete();
     }
 
     @Override
@@ -189,6 +186,28 @@ public class S3BucketService implements IS3BucketService {
             throw new RuntimeException(e);
         }
         return url.toString();
+    }
+
+    private void uploadFileToBucket(String bucketName, String folderPath, File file) {
+        s3Client.putObject(new PutObjectRequest(bucketName, folderPath + file.getName(), file));
+    }
+
+    private void uploadFileToBucketAsync(String bucketName, String folderPath, File file) {
+        TransferManager transferManager = TransferManagerBuilder.standard()
+                .withS3Client(s3Client)
+                .build();
+
+        // TransferManager processes all transfers asynchronously,
+        // so this call returns immediately.
+        Upload upload = transferManager.upload(bucketName, folderPath + file.getName(), file);
+        System.out.println("Object upload started");
+
+        // Optionally, wait for the upload to finish before continuing.
+        try {
+            upload.waitForCompletion();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void waitWhileBucketCreate(String bucketName) {
