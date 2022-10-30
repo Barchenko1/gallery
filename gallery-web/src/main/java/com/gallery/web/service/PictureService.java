@@ -6,8 +6,9 @@ import com.gallery.layer.service.IS3MultipleBucketService;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +51,34 @@ public class PictureService implements IPictureService {
     }
 
     @Override
+    public Mono<PictureModal> getMonoPicture(String objectKey) {
+        Mono<S3ObjectSummary> s3ObjectSummaryMono = Mono.just(s3MultipleBucketService.getS3ObjectSummary(objectKey));
+        Mono<String> getMonoUrl = Mono.just(s3MultipleBucketService.getFileUrl(objectKey));
+
+        return s3ObjectSummaryMono
+                .zipWith(getMonoUrl)
+                .map(tuple -> setupPictureModal(tuple.getT1().getKey(),
+                                                    tuple.getT2(),
+                                                    tuple.getT1().getLastModified()));
+
+    }
+
+    @Override
+    public List<PictureModal> getPictureList(String folderPath) {
+        return null;
+    }
+
+    @Override
+    public Flux<PictureModal> getFluxPictureList(String folderPath) {
+        return null;
+    }
+
+    @Override
+    public List<PictureModal> getPictureList(String folderPath, int limit) {
+        return null;
+    }
+
+    @Override
     public byte[] downloadPicture(String fileName) {
         return s3MultipleBucketService.downloadFile(fileName);
     }
@@ -61,17 +90,13 @@ public class PictureService implements IPictureService {
     }
 
     @Override
-    public void deleteFolder(String objectKey) {
-
+    public String deleteFolder(String objectKey) {
+        s3MultipleBucketService.deleteFolder(objectKey);
+        return String.format("objectKey %s success deleted", objectKey);
     }
 
     @Override
     public void copyFolderAndRemove(String folderPath, String destinationPath) {
-
-    }
-
-    @Override
-    public void renameFolder(String folderPath, String newFolderPath) {
 
     }
 

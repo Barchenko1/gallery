@@ -11,24 +11,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.List;
+
 
 @Configuration
 @PropertySource("classpath:application.yaml")
 public class WebConfig {
 
-    @Value("${cloud.aws.key.access}")
-    private String accessKey;
-    @Value("${cloud.aws.key.secret}")
-    private String secretKey;
-    @Value("${cloud.aws.region}")
-    private String region;
-    @Value("${cloud.aws.s3.bucket.limit.size.mb}")
+    @Value("${cloud.aws.s3.bucket.limit-size-mb}")
     private int bucketLimit;
+    @Value("${CLOUD_AWS_S3_BUCKET_REGION}")
+    private String region;
+    @Value("${CLOUD_AWS_CREDENTIALS_PROFILE-NAME}")
+    private String profileName;
+    @Value("${CLOUD_AWS_S3_BUCKET_NAME_LIST}")
+    private List<String> bucketNameList;
 
     @Bean
     public AmazonS3 s3Client() {
         S3Config s3Config = new S3Config();
-        return s3Config.s3Client(accessKey, secretKey, region);
+        return s3Config.getS3ClientProfileCredential(profileName, region);
     }
 
     @Bean

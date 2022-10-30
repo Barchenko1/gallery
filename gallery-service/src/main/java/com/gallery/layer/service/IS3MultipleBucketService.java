@@ -11,6 +11,7 @@ public interface IS3MultipleBucketService {
     void setUploadFilesSize(long uploadFilesSize);
     void createBucket(String bucketName);
     void createBucket(String bucketName, String region);
+    void cleanUpBucket(String bucketName);
     void deleteBucket(String bucketName);
     void deleteFile(String objectKey);
     void deleteFolder(String objectKey);
@@ -23,6 +24,5 @@ public interface IS3MultipleBucketService {
     void uploadMultipartFile(String folderPath, MultipartFile multipartFile);
     void uploadMultipartFileAsync(String folderPath, MultipartFile multipartFile);
     void copyFolderAndRemove(String folderPath, String destinationPath);
-    void renameFolder(String folderPath, String newFolderPath);
 
 }

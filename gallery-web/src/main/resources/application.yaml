@@ -1,14 +1,8 @@
 cloud:
   aws:
-    key:
-      access: ""
-      secret: ""
-    region: ""
     s3:
       bucket:
-        limit:
-          size:
-            "mb": "100"
+        limit-size-mb: 100
 
 spring:
   servlet:

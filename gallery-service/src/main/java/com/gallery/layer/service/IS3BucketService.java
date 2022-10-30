@@ -1,5 +1,6 @@
 package com.gallery.layer.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -16,19 +17,19 @@ public interface IS3BucketService {
     void deleteFile(String bucketName, String objectKey);
     void deleteFolder(String bucketName, String objectKey);
     List<Bucket> getBucketList();
+    List<Bucket> getSelectedBucketList(List<String> bucketNameList);
     S3ObjectSummary getS3ObjectSummary(String bucketName, String objectKey);
     S3Object getS3Object(String bucketName, String objectKey);
     String getFileUrl(String bucketName, String objectKey);
     boolean doesObjectExist(String bucketName, String objectKey);
+    boolean doesFolderPathExist(String bucketName, String objectKey);
     boolean doesBucketExist(String bucketName);
     void uploadFile(String bucketName, String folderPath, File file);
-    void uploadFolder(String bucketName, String folderName);
+    void uploadFolderAsync(String bucketName, String folderName);
     void uploadFileAsync(String bucketName, String folderPath, File file);
     void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile);
     void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile);
     byte[] downloadFile(String bucketName, String objectKey);
     void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath);
-    void renameFolder(String bucketName, String folderPath, String newFolderPath);
-//    List<?> getFolderFileList(String folderName);
-//    List<?> getFileChunk(String folderName, int chunk);
+
 }

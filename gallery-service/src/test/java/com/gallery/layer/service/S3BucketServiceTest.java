@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class S3BucketServiceTest {
 
@@ -17,7 +20,7 @@ public class S3BucketServiceTest {
     @BeforeAll
     public static void setupTest() {
         S3Config s3Config = new S3Config();
-        s3BucketService = new S3BucketService(s3Config.s3Client("", "", ""));
+        s3BucketService = new S3BucketService(s3Config.getS3ClientEnvironmentVariableCredentials("us-east-1"));
     }
 
     @Test
@@ -37,6 +40,43 @@ public class S3BucketServiceTest {
     }
 
     @Test
+    @Order(3)
+    public void downloadFile() {
+        File file = null;
+        try (OutputStream out = new FileOutputStream("")) {
+            out.write(s3BucketService.downloadFile(TEST_BUCKET, FOLDER_PREFIX_PATH + ""));
+        } catch (IOException ex) {
+
+        }
+    }
+
+    @Test
+    @Order(4)
+    public void getS3Object() {
+        s3BucketService.getS3Object(TEST_BUCKET, FOLDER_PREFIX_PATH + "");
+    }
+
+    @Test
+    @Order(5)
+    public void getFileUrl() {
+        s3BucketService.getFileUrl(TEST_BUCKET, FOLDER_PREFIX_PATH + "");
+    }
+
+    @Test
+    @Order(6)
+    public void getS3ObjectSummary() {
+        s3BucketService.getS3ObjectSummary(TEST_BUCKET, FOLDER_PREFIX_PATH + "");
+    }
+
+    @Test
+    @Order(19)
+    public void cleanUpBucketTest() {
+        s3BucketService.cleanUpBucket(TEST_BUCKET);
+
+    }
+
+    @Test
+    @Order(20)
     public void deleteBucket() {
         s3BucketService.deleteBucket(TEST_BUCKET);
         Assertions.assertFalse(s3BucketService.doesBucketExist(TEST_BUCKET));

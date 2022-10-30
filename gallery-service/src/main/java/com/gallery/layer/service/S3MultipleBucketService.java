@@ -17,12 +17,20 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     private final S3BucketService s3BucketService;
     private final List<Bucket> bucketList;
     private long uploadFilesSize;
+    private List<String> bucketNameList;
 
     public S3MultipleBucketService(AmazonS3 s3Client, long bucketLimit) {
         this.s3BucketService = new S3BucketService(s3Client);
         this.bucketLimit = bucketLimit;
         this.awsCliProcess = new AwsCliProcess();
         this.bucketList = s3BucketService.getBucketList();
+    }
+
+    public S3MultipleBucketService(AmazonS3 s3Client, List<String> bucketNameList, long bucketLimit) {
+        this.s3BucketService = new S3BucketService(s3Client);
+        this.bucketLimit = bucketLimit;
+        this.awsCliProcess = new AwsCliProcess();
+        this.bucketList = s3BucketService.getSelectedBucketList(bucketNameList);
     }
 
     @Override
@@ -70,11 +78,6 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
-    public void renameFolder(String folderPath, String newFolderPath) {
-
-    }
-
-    @Override
     public String getFileUrl(String objectKey) {
         return getFilteredBucket(objectKey)
                 .map(bucket -> s3BucketService.getFileUrl(bucket.getName(), objectKey))
@@ -103,6 +106,11 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
     }
 
     @Override
+    public void cleanUpBucket(String bucketName) {
+        s3BucketService.cleanUpBucket(bucketName);
+    }
+
+    @Override
     public void deleteBucket(String bucketName) {
         s3BucketService.deleteBucket(bucketName);
     }
@@ -116,7 +124,9 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
 
     @Override
     public void deleteFolder(String objectKey) {
-
+        getFilteredBucket(objectKey)
+                .findFirst()
+                .ifPresent(bucket -> s3BucketService.deleteFolder(bucket.getName(), objectKey));
     }
 
     @Override
@@ -144,7 +154,8 @@ public class S3MultipleBucketService implements IS3MultipleBucketService {
 
     private Stream<Bucket> getFilteredBucket(String objectKey) {
         return bucketList.stream()
-                .filter(bucket -> s3BucketService.doesObjectExist(bucket.getName(), objectKey));
+                .filter(bucket -> s3BucketService.doesObjectExist(bucket.getName(), objectKey)
+                            || s3BucketService.doesFolderPathExist(bucket.getName(), objectKey));
     }
 
     private long calculateLimitSize() {

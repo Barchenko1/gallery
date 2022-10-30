@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -50,6 +51,11 @@ public class S3Rest {
     @RequestMapping(value = "/view", method = RequestMethod.GET)
     public ResponseEntity<PictureModal> getPicture(@RequestParam(value = "objectKey") String objectKey) {
         return new ResponseEntity<>(pictureService.getPicture(objectKey), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/reactive/view", method = RequestMethod.GET)
+    public ResponseEntity<Mono<PictureModal>> getReactivePicture(@RequestParam(value = "objectKey") String objectKey) {
+        return new ResponseEntity<>(pictureService.getMonoPicture(objectKey), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
