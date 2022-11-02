@@ -10,14 +10,10 @@ import com.amazonaws.services.s3.model.CopyPartRequest;
 import com.amazonaws.services.s3.model.CopyPartResult;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.DeleteBucketRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsResult;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.GetBucketLocationRequest;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
-import com.amazonaws.services.s3.model.ListBucketsRequest;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -67,8 +63,7 @@ public class S3BucketService implements IS3BucketService {
     @Override
     public void createBucket(String bucketName, String region) {
         if (!s3Client.doesBucketExistV2(bucketName)) {
-            CreateBucketRequest createBucketRequest =
-                    new CreateBucketRequest(bucketName, region);
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName, region);
             s3Client.createBucket(createBucketRequest);
         }
     }
@@ -125,13 +120,15 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath) {
+        //todo
         try {
             // Initiate the multipart upload.
             InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest(bucketName, destinationPath);
             InitiateMultipartUploadResult initResult = s3Client.initiateMultipartUpload(initRequest);
 
             // Get the object size to track the end of the copy operation.
-            GetObjectMetadataRequest metadataRequest = new GetObjectMetadataRequest(bucketName, folderPath);
+            GetObjectMetadataRequest metadataRequest =
+                    new GetObjectMetadataRequest(bucketName, handleFolderPath(folderPath));
             ObjectMetadata metadataResult = s3Client.getObjectMetadata(metadataRequest);
             long objectSize = metadataResult.getContentLength();
 
@@ -139,7 +136,7 @@ public class S3BucketService implements IS3BucketService {
             long partSize = 5 * 1024 * 1024;
             long bytePosition = 0;
             int partNum = 1;
-            List<CopyPartResult> copyResponses = new ArrayList<CopyPartResult>();
+            List<CopyPartResult> copyResponses = new ArrayList<>();
             while (bytePosition < objectSize) {
                 // The last part might be smaller than partSize, so check to make sure
                 // that lastByte isn't beyond the end of the object.
@@ -174,12 +171,11 @@ public class S3BucketService implements IS3BucketService {
         // Amazon S3 couldn't be contacted for a response, or the client
         // couldn't parse the response from Amazon S3.
         e.printStackTrace();
-
+        }
     }
-    }
 
-    private static List<PartETag> getETags(List<CopyPartResult> responses) {
-        List<PartETag> etags = new ArrayList<PartETag>();
+    private List<PartETag> getETags(List<CopyPartResult> responses) {
+        List<PartETag> etags = new ArrayList<>();
         for (CopyPartResult response : responses) {
             etags.add(new PartETag(response.getPartNumber(), response.getETag()));
         }
@@ -188,11 +184,12 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void uploadFile(String bucketName, String folderPath, File file) {
-        uploadFileToBucket(bucketName, folderPath, file);
+        uploadFileToBucket(bucketName, handleFolderPath(folderPath), file);
     }
 
     @Override
     public void uploadFolderAsync(String bucket, String folderName) {
+        //todo
         TransferManager transferManager = TransferManagerBuilder.standard()
                 .withS3Client(s3Client)
                 .build();
@@ -204,20 +201,20 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void uploadFileAsync(String bucketName, String folderPath, File file) {
-        uploadFileToBucketAsync(bucketName, folderPath, file);
+        uploadFileToBucketAsync(bucketName, handleFolderPath(folderPath), file);
     }
 
     @Override
     public void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile) {
         File file = multipartFileToFileConverter.convert(multipartFile);
-        uploadFileToBucket(bucketName, folderPath, file);
+        uploadFileToBucket(bucketName, handleFolderPath(folderPath), file);
         file.delete();
     }
 
     @Override
     public void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile) {
         File file = multipartFileToFileConverter.convert(multipartFile);
-        uploadFileToBucketAsync(bucketName, folderPath, file);
+        uploadFileToBucketAsync(bucketName, handleFolderPath(folderPath), file);
         file.delete();
     }
 
@@ -274,7 +271,8 @@ public class S3BucketService implements IS3BucketService {
     }
 
     private void uploadFileToBucket(String bucketName, String folderPath, File file) {
-        s3Client.putObject(new PutObjectRequest(bucketName, folderPath + file.getName(), file));
+        s3Client.putObject(new PutObjectRequest(bucketName,
+                handleFolderPath(folderPath) + file.getName(), file));
     }
 
     private void uploadFileToBucketAsync(String bucketName, String folderPath, File file) {
@@ -284,14 +282,17 @@ public class S3BucketService implements IS3BucketService {
 
         // TransferManager processes all transfers asynchronously,
         // so this call returns immediately.
-        folderPath = folderPath.endsWith("/") ? folderPath : folderPath + "/";
-
-        Upload upload = transferManager.upload(bucketName, folderPath + file.getName(), file);
+        Upload upload = transferManager.upload(bucketName,
+                handleFolderPath(folderPath) + file.getName(), file);
         try {
             upload.waitForCompletion();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String handleFolderPath(String folderPath) {
+        return folderPath.endsWith("/") ? folderPath : folderPath + "/";
     }
 
 }

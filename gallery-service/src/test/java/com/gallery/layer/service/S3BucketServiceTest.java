@@ -1,5 +1,6 @@
 package com.gallery.layer.service;
 
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.gallery.layer.config.S3Config;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class S3BucketServiceTest extends BaseBucketServiceTest {
@@ -35,9 +37,18 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
 
     @Test
     @Order(2)
-    public void uploadFileTest() {
+    public void uploadFileAsyncTest() {
         File file = Paths.get(getFullFilePath(TEST_FILE_TXT)).toFile();
         s3BucketService.uploadFileAsync(TEST_BUCKET, FOLDER_PREFIX_PATH, file);
+        Assertions.assertTrue(
+                s3BucketService.doesObjectExist(TEST_BUCKET, getObjectKey()));
+    }
+
+    @Test
+    @Order(2)
+    public void uploadFileTest() {
+        File file = Paths.get(getFullFilePath(TEST_FILE_TXT)).toFile();
+        s3BucketService.uploadFile(TEST_BUCKET, FOLDER_PREFIX_PATH, file);
         Assertions.assertTrue(
                 s3BucketService.doesObjectExist(TEST_BUCKET, getObjectKey()));
     }
@@ -87,6 +98,13 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
 
     @Test
     @Order(9)
+    public void deleteFileTest() {
+        s3BucketService.deleteFile(TEST_BUCKET, getObjectKey());
+        Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
+    }
+
+    @Test
+    @Order(9)
     public void deleteFolderTest() {
         s3BucketService.deleteFolder(TEST_BUCKET, FOLDER_PREFIX_PATH + "/");
         Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
@@ -101,6 +119,13 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
 
     @Test
     @Order(11)
+    public void getBucketListTest() {
+        List<Bucket> bucketList = s3BucketService.getBucketList();
+        Assertions.assertEquals(TEST_BUCKET, bucketList.get(0).getName());
+    }
+
+    @Test
+    @Order(12)
     public void deleteBucketTest() {
         s3BucketService.deleteBucket(TEST_BUCKET);
         Assertions.assertFalse(s3BucketService.doesBucketExist(TEST_BUCKET));
