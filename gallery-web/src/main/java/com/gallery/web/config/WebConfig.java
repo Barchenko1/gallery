@@ -18,6 +18,10 @@ import java.util.List;
 @PropertySource("classpath:application.yaml")
 public class WebConfig {
 
+    @Value("${AWS_ACCESS_KEY_ID}")
+    private String accessKey;
+    @Value("${AWS_SECRET_ACCESS_KEY}")
+    private String secretKey;
     @Value("${cloud.aws.s3.bucket.limit-size-mb}")
     private int bucketLimit;
     @Value("${CLOUD_AWS_S3_BUCKET_REGION}")
@@ -30,7 +34,7 @@ public class WebConfig {
     @Bean
     public AmazonS3 s3Client() {
         S3Config s3Config = new S3Config();
-        return s3Config.getS3ClientProfileCredential(profileName, region);
+        return s3Config.getS3ClientStaticCredentials(accessKey, secretKey, region);
     }
 
     @Bean

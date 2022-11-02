@@ -13,6 +13,7 @@ import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsResult;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.GetBucketLocationRequest;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
@@ -58,9 +59,10 @@ public class S3BucketService implements IS3BucketService {
     @Override
     public void createBucket(String bucketName) {
         if (!s3Client.doesBucketExistV2(bucketName)) {
-            CreateBucketRequest createBucketRequest =
-                    new CreateBucketRequest(bucketName, s3Client.getRegion());
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             s3Client.createBucket(createBucketRequest);
+            String bucketLocation = s3Client.getBucketLocation(new GetBucketLocationRequest(bucketName));
+            System.out.println(bucketLocation);
         }
         waitWhileBucketCreate(bucketName);
     }
