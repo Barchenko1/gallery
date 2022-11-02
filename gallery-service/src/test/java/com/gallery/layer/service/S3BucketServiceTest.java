@@ -87,13 +87,20 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
 
     @Test
     @Order(9)
-    public void cleanUpBucketTestTest() {
-        s3BucketService.cleanUpBucket(TEST_BUCKET);
+    public void deleteFolderTest() {
+        s3BucketService.deleteFolder(TEST_BUCKET, FOLDER_PREFIX_PATH + "/");
         Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
     }
 
     @Test
     @Order(10)
+    public void cleanUpBucketTest() {
+        s3BucketService.cleanUpBucket(TEST_BUCKET);
+        Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
+    }
+
+    @Test
+    @Order(11)
     public void deleteBucketTest() {
         s3BucketService.deleteBucket(TEST_BUCKET);
         Assertions.assertFalse(s3BucketService.doesBucketExist(TEST_BUCKET));

@@ -61,10 +61,7 @@ public class S3BucketService implements IS3BucketService {
         if (!s3Client.doesBucketExistV2(bucketName)) {
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             s3Client.createBucket(createBucketRequest);
-            String bucketLocation = s3Client.getBucketLocation(new GetBucketLocationRequest(bucketName));
-            System.out.println(bucketLocation);
         }
-        waitWhileBucketCreate(bucketName);
     }
 
     @Override
@@ -74,19 +71,13 @@ public class S3BucketService implements IS3BucketService {
                     new CreateBucketRequest(bucketName, region);
             s3Client.createBucket(createBucketRequest);
         }
-        waitWhileBucketCreate(bucketName);
     }
 
     @Override
     public void cleanUpBucket(String bucketName) {
-        // Delete the sample objects.
-        DeleteObjectsRequest multiObjectDeleteRequest = new DeleteObjectsRequest(bucketName)
-                .withQuiet(false);
-
-        // Verify that the objects were deleted successfully.
-        DeleteObjectsResult deleteObjectsResult = s3Client.deleteObjects(multiObjectDeleteRequest);
-        int successfulDeletes = deleteObjectsResult.getDeletedObjects().size();
-        System.out.println(successfulDeletes + " objects successfully deleted.");
+        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName);
+        result.getObjectSummaries()
+                .forEach(s3ObjectSummary -> s3Client.deleteObject(bucketName, s3ObjectSummary.getKey()));
     }
 
     @Override
@@ -175,7 +166,6 @@ public class S3BucketService implements IS3BucketService {
                     initResult.getUploadId(),
                     getETags(copyResponses));
             s3Client.completeMultipartUpload(completeRequest);
-            System.out.println("Multipart copy complete.");
     } catch (AmazonServiceException e) {
         // The call was transmitted successfully, but Amazon S3 couldn't process
         // it, so it returned an error response.
@@ -238,7 +228,9 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void deleteFolder(String bucketName, String objectKey) {
-        s3Client.deleteObject(bucketName, objectKey);
+        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName, objectKey);
+        result.getObjectSummaries()
+                        .forEach(s3ObjectSummary -> s3Client.deleteObject(bucketName, s3ObjectSummary.getKey()));
     }
 
     @Override
@@ -292,10 +284,9 @@ public class S3BucketService implements IS3BucketService {
 
         // TransferManager processes all transfers asynchronously,
         // so this call returns immediately.
-        Upload upload = transferManager.upload(bucketName, folderPath + file.getName(), file);
-        System.out.println("Object upload started");
+        folderPath = folderPath.endsWith("/") ? folderPath : folderPath + "/";
 
-        // Optionally, wait for the upload to finish before continuing.
+        Upload upload = transferManager.upload(bucketName, folderPath + file.getName(), file);
         try {
             upload.waitForCompletion();
         } catch (InterruptedException e) {
@@ -303,19 +294,4 @@ public class S3BucketService implements IS3BucketService {
         }
     }
 
-    private void waitWhileBucketCreate(String bucketName) {
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + 60 * 1000;
-        while (!s3Client.doesBucketExistV2(bucketName) && endTime > System.currentTimeMillis()) {
-            try {
-//                LOG.info("Waiting for Amazon S3 to create bucket " + bucketName);
-                Thread.sleep(1000 * 10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException();
-            }
-        }
-        if (!s3Client.doesBucketExistV2(bucketName)) {
-            throw new IllegalStateException("Could not create bucket " + bucketName);
-        }
-    }
 }
