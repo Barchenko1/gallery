@@ -9,6 +9,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class BaseBucketServiceTest {
@@ -16,17 +18,29 @@ public abstract class BaseBucketServiceTest {
     protected static final String ACCESS_KEY = System.getenv("AWS_ACCESS_KEY_ID");
     protected static final String SECRET_KEY = System.getenv("AWS_SECRET_ACCESS_KEY");
     protected static final String REGION = System.getenv("CLOUD_AWS_S3_BUCKET_REGION");
-    protected static final long BUCKET_LIMIT = 10;
+    protected static long BUCKET_LIMIT = Long.parseLong(System.getenv(
+            "CLOUD_AWS_S3_BUCKET_LIMIT_SIZE_MB"
+    ));
 
-    protected String TEST_BUCKET = "test-multi-bucket-lib";
-    protected String FOLDER_PREFIX_PATH = "test/s3";
+    protected static String TEST_BUCKET = "test-single-bucket-lib";
+    protected static String TEST_MULTIPLE_BUCKET = "test-multi-bucket-lib";
+    protected static List<String> SELECTED_BUCKET_LIST = new ArrayList<>() {{
+        add(TEST_BUCKET);
+    }};
+    protected String TEST_FOLDER_PREFIX_PATH = "test";
+    protected String TEST_ASYNC_FOLDER_PREFIX_PATH = "testAsync";
     protected String TEST_FILE_TXT = "testFile.txt";
+    protected String TEST_ASYNC_FILE_TXT = "testFileAsync.txt";
     protected String TEST_OUTPUT_FILE_TXT = "testFileOutput.txt";
     protected String TEST_MSG = "test multi file upload lib";
     protected String TEST_FILE_CONTENT_TYPE = "text/plain";
 
     protected String getObjectKey() {
-        return FOLDER_PREFIX_PATH + "/" +TEST_FILE_TXT;
+        return TEST_FOLDER_PREFIX_PATH + "/" + TEST_FILE_TXT;
+    }
+
+    protected String getObjectAsyncKey() {
+        return TEST_ASYNC_FOLDER_PREFIX_PATH + "/" + TEST_ASYNC_FILE_TXT;
     }
 
     protected void waitNextTest() {
@@ -41,6 +55,15 @@ public abstract class BaseBucketServiceTest {
                                 String targetFilePath, String destinationFile) {
         try (OutputStream out = new FileOutputStream(destinationFile)) {
             out.write(s3BucketService.downloadFile(TEST_BUCKET, targetFilePath));
+        } catch (IOException ex) {
+            throw new RuntimeException();
+        }
+    }
+
+    protected void loadFile(IS3MultipleBucketService s3MultipleBucketService,
+                            String targetFilePath, String destinationFile) {
+        try (OutputStream out = new FileOutputStream(destinationFile)) {
+            out.write(s3MultipleBucketService.downloadFile(targetFilePath));
         } catch (IOException ex) {
             throw new RuntimeException();
         }

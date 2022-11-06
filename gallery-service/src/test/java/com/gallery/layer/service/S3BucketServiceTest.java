@@ -1,6 +1,7 @@
 package com.gallery.layer.service;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.PublicAccessBlockConfiguration;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.gallery.layer.config.S3Config;
@@ -25,12 +26,20 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
         S3Config s3Config = new S3Config();
         s3BucketService = new S3BucketService(
                 s3Config.getS3ClientStaticCredentials(ACCESS_KEY, SECRET_KEY, REGION));
+        s3BucketService.cleanUpBucket(TEST_BUCKET);
+        s3BucketService.deleteBucket(TEST_BUCKET);
     }
 
     @Test
     @Order(1)
     public void createBucketTest() {
-        s3BucketService.createBucket(TEST_BUCKET);
+        PublicAccessBlockConfiguration publicAccessBlockConfiguration =
+                new PublicAccessBlockConfiguration()
+                        .withBlockPublicAcls(true)
+                        .withIgnorePublicAcls(true)
+                        .withBlockPublicPolicy(true)
+                        .withRestrictPublicBuckets(true);
+        s3BucketService.createBucket(TEST_BUCKET, publicAccessBlockConfiguration);
         Assertions.assertTrue(s3BucketService.doesBucketExist(TEST_BUCKET));
         waitNextTest();
     }
@@ -38,31 +47,25 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     @Test
     @Order(2)
     public void uploadFileAsyncTest() {
-        File file = Paths.get(getFullFilePath(TEST_FILE_TXT)).toFile();
-        s3BucketService.uploadFileAsync(TEST_BUCKET, FOLDER_PREFIX_PATH, file);
+        File file = Paths.get(getFullFilePath(TEST_ASYNC_FILE_TXT)).toFile();
+        s3BucketService.uploadFileAsync(TEST_BUCKET, TEST_ASYNC_FOLDER_PREFIX_PATH, file);
         Assertions.assertTrue(
-                s3BucketService.doesObjectExist(TEST_BUCKET, getObjectKey()));
-    }
-
-    @Test
-    @Order(2)
-    public void uploadFileTest() {
-        File file = Paths.get(getFullFilePath(TEST_FILE_TXT)).toFile();
-        s3BucketService.uploadFile(TEST_BUCKET, FOLDER_PREFIX_PATH, file);
-        Assertions.assertTrue(
-                s3BucketService.doesObjectExist(TEST_BUCKET, getObjectKey()));
+                s3BucketService.doesObjectExist(TEST_BUCKET, getObjectAsyncKey()));
     }
 
     @Test
     @Order(3)
-    public void uploadFolderAsyncTest() {
-
+    public void uploadFileTest() {
+        File file = Paths.get(getFullFilePath(TEST_FILE_TXT)).toFile();
+        s3BucketService.uploadFile(TEST_BUCKET, TEST_FOLDER_PREFIX_PATH, file);
+        Assertions.assertTrue(
+                s3BucketService.doesObjectExist(TEST_BUCKET, getObjectKey()));
     }
 
     @Test
     @Order(4)
-    public void copyFolderAndRemoveTest() {
-
+    public void uploadFolderAsyncTest() {
+        //todo
     }
 
     @Test
@@ -98,34 +101,65 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
 
     @Test
     @Order(9)
-    public void deleteFileTest() {
-        s3BucketService.deleteFile(TEST_BUCKET, getObjectKey());
-        Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
-    }
-
-    @Test
-    @Order(9)
-    public void deleteFolderTest() {
-        s3BucketService.deleteFolder(TEST_BUCKET, FOLDER_PREFIX_PATH + "/");
-        Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
+    public void copyFolderTest() {
+        String destinationFolder = "coped";
+        s3BucketService.copyFolder(TEST_BUCKET, TEST_FOLDER_PREFIX_PATH, destinationFolder);
+        Assertions.assertTrue(s3BucketService.doesObjectExist(
+                TEST_BUCKET, destinationFolder + "/" + TEST_FILE_TXT));
     }
 
     @Test
     @Order(10)
+    public void copyFolderAndRemoveTest() {
+        String destinationFolder = "copedAndRemove";
+        s3BucketService.copyFolderAndRemove(TEST_BUCKET, TEST_FOLDER_PREFIX_PATH, destinationFolder);
+        Assertions.assertTrue(s3BucketService.doesObjectExist(
+                TEST_BUCKET, destinationFolder + "/" + TEST_FILE_TXT));
+        Assertions.assertFalse(s3BucketService.doesObjectExist(
+                TEST_BUCKET, getObjectKey()));
+    }
+
+    @Test
+    @Order(11)
+    public void deleteFileTest() {
+        s3BucketService.deleteFile(TEST_BUCKET, getObjectAsyncKey());
+        Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectAsyncKey()));
+    }
+
+    @Test
+    @Order(12)
+    public void deleteFolderTest() {
+        s3BucketService.deleteFolder(TEST_BUCKET, TEST_FOLDER_PREFIX_PATH);
+        Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
+    }
+
+    @Test
+    @Order(13)
     public void cleanUpBucketTest() {
         s3BucketService.cleanUpBucket(TEST_BUCKET);
         Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
     }
 
     @Test
-    @Order(11)
+    @Order(14)
     public void getBucketListTest() {
         List<Bucket> bucketList = s3BucketService.getBucketList();
-        Assertions.assertEquals(TEST_BUCKET, bucketList.get(0).getName());
+        boolean testBucketName = bucketList.stream()
+                        .anyMatch(bucket -> TEST_BUCKET.equals(bucket.getName()));
+        Assertions.assertTrue(testBucketName);
     }
 
     @Test
-    @Order(12)
+    @Order(15)
+    public void getSelectedBucketListTest() {
+        List<Bucket> bucketList = s3BucketService.getSelectedBucketList(SELECTED_BUCKET_LIST);
+        boolean testBucketName = bucketList.stream()
+                .anyMatch(bucket -> TEST_BUCKET.equals(bucket.getName()));
+        Assertions.assertTrue(testBucketName);
+    }
+
+    @Test
+    @Order(16)
     public void deleteBucketTest() {
         s3BucketService.deleteBucket(TEST_BUCKET);
         Assertions.assertFalse(s3BucketService.doesBucketExist(TEST_BUCKET));

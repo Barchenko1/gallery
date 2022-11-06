@@ -22,7 +22,7 @@ public class WebConfig {
     private String accessKey;
     @Value("${AWS_SECRET_ACCESS_KEY}")
     private String secretKey;
-    @Value("${cloud.aws.s3.bucket.limit-size-mb}")
+    @Value("${CLOUD_AWS_S3_BUCKET_LIMIT_SIZE_MB}")
     private int bucketLimit;
     @Value("${CLOUD_AWS_S3_BUCKET_REGION}")
     private String region;

@@ -102,10 +102,15 @@ public class PictureService implements IPictureService {
 
     private PictureModal setupPictureModal(String objectKey, String url, Date lastModified) {
         return PictureModal.builder()
+                .tag(getTag(objectKey))
                 .objectKey(objectKey)
                 .url(url)
                 .lastModified(lastModified)
                 .build();
+    }
+
+    private String getTag(String objectKey) {
+        return "";
     }
 
     private long getFilesSizeSum(List<MultipartFile> multipartFileList) {

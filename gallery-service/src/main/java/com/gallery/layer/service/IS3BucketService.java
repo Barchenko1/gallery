@@ -2,6 +2,7 @@ package com.gallery.layer.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.PublicAccessBlockConfiguration;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +12,8 @@ import java.util.List;
 
 public interface IS3BucketService {
     void createBucket(String bucketName);
+    void createBucket(String bucketName, PublicAccessBlockConfiguration publicAccessBlockConfiguration);
+    void createBucket(String bucketName, String region, PublicAccessBlockConfiguration publicAccessBlockConfiguration);
     void createBucket(String bucketName, String region);
     void cleanUpBucket(String bucketName);
     void deleteBucket(String bucketName);
@@ -31,5 +34,5 @@ public interface IS3BucketService {
     void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile);
     byte[] downloadFile(String bucketName, String objectKey);
     void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath);
-
+    void copyFolder(String bucketName, String folderPath, String destinationPath);
 }

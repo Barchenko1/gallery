@@ -1,6 +1,5 @@
 package com.gallery.layer.service;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -18,10 +17,12 @@ import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PartETag;
+import com.amazonaws.services.s3.model.PublicAccessBlockConfiguration;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.SetPublicAccessBlockRequest;
 import com.amazonaws.services.s3.transfer.MultipleFileUpload;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
@@ -54,25 +55,41 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void createBucket(String bucketName) {
-        if (!s3Client.doesBucketExistV2(bucketName)) {
-            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
-            s3Client.createBucket(createBucketRequest);
-        }
+        createS3Bucket(bucketName);
+    }
+
+    @Override
+    public void createBucket(String bucketName, PublicAccessBlockConfiguration publicAccessBlockConfiguration) {
+        createS3Bucket(bucketName);
+        s3Client.setPublicAccessBlock(new SetPublicAccessBlockRequest()
+                .withBucketName(bucketName)
+                .withPublicAccessBlockConfiguration(publicAccessBlockConfiguration));
     }
 
     @Override
     public void createBucket(String bucketName, String region) {
-        if (!s3Client.doesBucketExistV2(bucketName)) {
-            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName, region);
-            s3Client.createBucket(createBucketRequest);
-        }
+        createS3BucketWithRegion(bucketName, region);
+    }
+
+    @Override
+    public void createBucket(String bucketName, String region,
+                             PublicAccessBlockConfiguration publicAccessBlockConfiguration) {
+        createS3BucketWithRegion(bucketName, region);
+        s3Client.setPublicAccessBlock(new SetPublicAccessBlockRequest()
+                .withBucketName(bucketName)
+                .withPublicAccessBlockConfiguration(publicAccessBlockConfiguration));
     }
 
     @Override
     public void cleanUpBucket(String bucketName) {
-        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName);
-        result.getObjectSummaries()
-                .forEach(s3ObjectSummary -> s3Client.deleteObject(bucketName, s3ObjectSummary.getKey()));
+        if (doesBucketExist(bucketName)){
+            ListObjectsV2Result result = s3Client.listObjectsV2(bucketName);
+            if(!result.getObjectSummaries().isEmpty()) {
+                result.getObjectSummaries()
+                        .forEach(s3ObjectSummary ->
+                                s3Client.deleteObject(bucketName, s3ObjectSummary.getKey()));
+            }
+        }
     }
 
     @Override
@@ -102,7 +119,7 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public boolean doesFolderPathExist(String bucketName, String objectKey) {
-        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName, objectKey);
+        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName, handleFolderPath(objectKey));
         return result.getKeyCount() > 0;
     }
 
@@ -120,66 +137,13 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void copyFolderAndRemove(String bucketName, String folderPath, String destinationPath) {
-        //todo
-        try {
-            // Initiate the multipart upload.
-            InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest(bucketName, destinationPath);
-            InitiateMultipartUploadResult initResult = s3Client.initiateMultipartUpload(initRequest);
-
-            // Get the object size to track the end of the copy operation.
-            GetObjectMetadataRequest metadataRequest =
-                    new GetObjectMetadataRequest(bucketName, handleFolderPath(folderPath));
-            ObjectMetadata metadataResult = s3Client.getObjectMetadata(metadataRequest);
-            long objectSize = metadataResult.getContentLength();
-
-            // Copy the object using 5 MB parts.
-            long partSize = 5 * 1024 * 1024;
-            long bytePosition = 0;
-            int partNum = 1;
-            List<CopyPartResult> copyResponses = new ArrayList<>();
-            while (bytePosition < objectSize) {
-                // The last part might be smaller than partSize, so check to make sure
-                // that lastByte isn't beyond the end of the object.
-                long lastByte = Math.min(bytePosition + partSize - 1, objectSize - 1);
-
-                // Copy this part.
-                CopyPartRequest copyRequest = new CopyPartRequest()
-                        .withSourceBucketName(bucketName)
-                        .withSourceKey(folderPath)
-                        .withDestinationBucketName(bucketName)
-                        .withDestinationKey(destinationPath)
-                        .withUploadId(initResult.getUploadId())
-                        .withFirstByte(bytePosition)
-                        .withLastByte(lastByte)
-                        .withPartNumber(partNum++);
-                copyResponses.add(s3Client.copyPart(copyRequest));
-                bytePosition += partSize;
-            }
-
-            // Complete the upload request to concatenate all uploaded parts and make the copied object available.
-            CompleteMultipartUploadRequest completeRequest = new CompleteMultipartUploadRequest(
-                    bucketName,
-                    destinationPath,
-                    initResult.getUploadId(),
-                    getETags(copyResponses));
-            s3Client.completeMultipartUpload(completeRequest);
-    } catch (AmazonServiceException e) {
-        // The call was transmitted successfully, but Amazon S3 couldn't process
-        // it, so it returned an error response.
-        e.printStackTrace();
-    } catch (SdkClientException e) {
-        // Amazon S3 couldn't be contacted for a response, or the client
-        // couldn't parse the response from Amazon S3.
-        e.printStackTrace();
-        }
+        copyS3BucketFolder(bucketName, folderPath, destinationPath);
+        deleteBucketFolder(bucketName, folderPath);
     }
 
-    private List<PartETag> getETags(List<CopyPartResult> responses) {
-        List<PartETag> etags = new ArrayList<>();
-        for (CopyPartResult response : responses) {
-            etags.add(new PartETag(response.getPartNumber(), response.getETag()));
-        }
-        return etags;
+    @Override
+    public void copyFolder(String bucketName, String folderPath, String destinationPath) {
+        copyS3BucketFolder(bucketName, folderPath, destinationPath);
     }
 
     @Override
@@ -220,29 +184,21 @@ public class S3BucketService implements IS3BucketService {
 
     @Override
     public void deleteFile(String bucketName, String objectKey) {
-        s3Client.deleteObject(bucketName, objectKey);
+        if (s3Client.doesObjectExist(bucketName, objectKey)) {
+            s3Client.deleteObject(bucketName, objectKey);
+        }
     }
 
     @Override
     public void deleteFolder(String bucketName, String objectKey) {
-        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName, objectKey);
-        result.getObjectSummaries()
-                        .forEach(s3ObjectSummary -> s3Client.deleteObject(bucketName, s3ObjectSummary.getKey()));
+        deleteBucketFolder(bucketName, objectKey);
     }
 
     @Override
     public S3ObjectSummary getS3ObjectSummary(String bucketName, String objectKey) {
-        ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
-                .withBucketName(bucketName)
-                .withPrefix(objectKey);
-        ListObjectsV2Result listObjectsV2Result = s3Client.listObjectsV2(listObjectsV2Request);
-        S3ObjectSummary s3ObjectSummary = null;
-        for (S3ObjectSummary objectSummary: listObjectsV2Result.getObjectSummaries()) {
-            s3ObjectSummary = objectSummary;
-            break;
-        }
-
-        return s3ObjectSummary;
+        return getListObjectsV2Result(bucketName, objectKey).getObjectSummaries().stream()
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
     }
 
     @Override
@@ -270,9 +226,28 @@ public class S3BucketService implements IS3BucketService {
         return url.toString();
     }
 
+    private void createS3Bucket(String bucketName) {
+        if (!s3Client.doesBucketExistV2(bucketName)) {
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
+            s3Client.createBucket(createBucketRequest);
+        }
+    }
+
+    private void createS3BucketWithRegion(String bucketName, String region) {
+        if (!s3Client.doesBucketExistV2(bucketName)) {
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName, region);
+            s3Client.createBucket(createBucketRequest);
+        }
+    }
+
+    private void deleteBucketFolder(String bucketName, String objectKey) {
+        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName, objectKey);
+        result.getObjectSummaries()
+                .forEach(s3ObjectSummary -> s3Client.deleteObject(bucketName, s3ObjectSummary.getKey()));
+    }
+
     private void uploadFileToBucket(String bucketName, String folderPath, File file) {
-        s3Client.putObject(new PutObjectRequest(bucketName,
-                handleFolderPath(folderPath) + file.getName(), file));
+        s3Client.putObject(new PutObjectRequest(bucketName, getObjectKeyFullPath(folderPath, file.getName()), file));
     }
 
     private void uploadFileToBucketAsync(String bucketName, String folderPath, File file) {
@@ -283,12 +258,82 @@ public class S3BucketService implements IS3BucketService {
         // TransferManager processes all transfers asynchronously,
         // so this call returns immediately.
         Upload upload = transferManager.upload(bucketName,
-                handleFolderPath(folderPath) + file.getName(), file);
+                getObjectKeyFullPath(folderPath, file.getName()), file);
         try {
             upload.waitForCompletion();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private ListObjectsV2Result getListObjectsV2Result(String bucketName, String objectKey) {
+        ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
+                .withBucketName(bucketName)
+                .withPrefix(objectKey);
+        return s3Client.listObjectsV2(listObjectsV2Request);
+    }
+
+    private List<PartETag> getETags(List<CopyPartResult> responses) {
+        return responses.stream()
+                .map(copyPartResult -> new PartETag(copyPartResult.getPartNumber(), copyPartResult.getETag()))
+                .collect(Collectors.toList());
+    }
+
+    private void copyS3BucketFolder(String bucketName, String folderPath, String destinationPath) {
+        try {
+            List<CopyPartResult> copyResponses = new ArrayList<>();
+            getListObjectsV2Result(bucketName, handleFolderPath(folderPath)).getObjectSummaries()
+                    .forEach(s3ObjectSummary -> {
+                        String destinationObjectKey =
+                                replaceObjectKeyPath(s3ObjectSummary.getKey(), folderPath, destinationPath);
+                        // Initiate the multipart upload.
+                        InitiateMultipartUploadRequest initRequest =
+                                new InitiateMultipartUploadRequest(bucketName, destinationObjectKey);
+                        InitiateMultipartUploadResult initResult = s3Client.initiateMultipartUpload(initRequest);
+                        GetObjectMetadataRequest metadataRequest =
+                                new GetObjectMetadataRequest(bucketName, s3ObjectSummary.getKey());
+                        ObjectMetadata metadataResult = s3Client.getObjectMetadata(metadataRequest);
+                        long objectSize = metadataResult.getContentLength();
+                        // Copy the object using 5 MB parts.
+                        long partSize = 5 * 1024 * 1024;
+                        long bytePosition = 0;
+                        int partNum = 1;
+                        while (bytePosition < objectSize) {
+                            // The last part might be smaller than partSize, so check to make sure
+                            // that lastByte isn't beyond the end of the object.
+                            long lastByte = Math.min(bytePosition + partSize - 1, objectSize - 1);
+                            // Copy this part.
+                            CopyPartRequest copyRequest = new CopyPartRequest()
+                                    .withSourceBucketName(bucketName)
+                                    .withSourceKey(s3ObjectSummary.getKey())
+                                    .withDestinationBucketName(bucketName)
+                                    .withDestinationKey(destinationObjectKey)
+                                    .withUploadId(initResult.getUploadId())
+                                    .withFirstByte(bytePosition)
+                                    .withLastByte(lastByte)
+                                    .withPartNumber(partNum++);
+                            copyResponses.add(s3Client.copyPart(copyRequest));
+                            bytePosition += partSize;
+                        }
+                        // Complete the upload request to concatenate all uploaded parts and make the copied object available.
+                        CompleteMultipartUploadRequest completeRequest = new CompleteMultipartUploadRequest(
+                                bucketName,
+                                destinationObjectKey,
+                                initResult.getUploadId(),
+                                getETags(copyResponses));
+                        s3Client.completeMultipartUpload(completeRequest);
+                    });
+        } catch (SdkClientException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String replaceObjectKeyPath(String objectKey, String folderPath, String destinationPath) {
+        return objectKey.replace(handleFolderPath(folderPath), handleFolderPath(destinationPath));
+    }
+
+    private String getObjectKeyFullPath(String folderPath, String fileName) {
+        return handleFolderPath(folderPath) + fileName;
     }
 
     private String handleFolderPath(String folderPath) {
