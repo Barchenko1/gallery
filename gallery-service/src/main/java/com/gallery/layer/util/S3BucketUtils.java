@@ -11,4 +11,14 @@ public class S3BucketUtils {
         expiration.setTime(expTimeMillis);
         return expiration;
     }
+
+    public static String replaceObjectKeyPath(String objectKey,
+                                              String folderPath,
+                                              String destinationPath) {
+        return objectKey.replace(folderPath, destinationPath);
+    }
+
+    public static String handleFolderPath(String folderPath) {
+        return folderPath.endsWith("/") ? folderPath : folderPath + "/";
+    }
 }

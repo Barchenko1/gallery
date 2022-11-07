@@ -9,8 +9,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class BaseBucketServiceTest {
@@ -18,15 +18,12 @@ public abstract class BaseBucketServiceTest {
     protected static final String ACCESS_KEY = System.getenv("AWS_ACCESS_KEY_ID");
     protected static final String SECRET_KEY = System.getenv("AWS_SECRET_ACCESS_KEY");
     protected static final String REGION = System.getenv("CLOUD_AWS_S3_BUCKET_REGION");
-    protected static long BUCKET_LIMIT = Long.parseLong(System.getenv(
-            "CLOUD_AWS_S3_BUCKET_LIMIT_SIZE_MB"
-    ));
+    protected static Map<String, Long> BUCKET_NAME_LIMIT_MAP = new HashMap<>() {{
+        put("gallery-anime", 100L);
+    }};
 
     protected static String TEST_BUCKET = "test-single-bucket-lib";
     protected static String TEST_MULTIPLE_BUCKET = "test-multi-bucket-lib";
-    protected static List<String> SELECTED_BUCKET_LIST = new ArrayList<>() {{
-        add(TEST_BUCKET);
-    }};
     protected String TEST_FOLDER_PREFIX_PATH = "test";
     protected String TEST_ASYNC_FOLDER_PREFIX_PATH = "testAsync";
     protected String TEST_FILE_TXT = "testFile.txt";
