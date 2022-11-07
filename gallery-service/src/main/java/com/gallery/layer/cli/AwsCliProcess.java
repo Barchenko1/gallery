@@ -10,12 +10,17 @@ public class AwsCliProcess implements IAwsCliProcess {
     private final IAwsCliScriptExecutor awsCliCommandExecutor = new AwsCliScriptExecutor();
 
     @Override
-    public boolean isBucketAvailable(String bucket, long limitBytes) {
+    public boolean isBucketAvailable(String bucket, double limitBytes) {
         return getBucketSize(bucket) < limitBytes;
     }
 
-    private double getBucketSize(String bucket) {
-        String script = String.format(S3_BUCKET_SIZE.getCommand(), bucket, "admin");
+    @Override
+    public double getCurrentBucketSize(String bucketName) {
+        return getBucketSize(bucketName);
+    }
+
+    private double getBucketSize(String bucketName) {
+        String script = String.format(S3_BUCKET_SIZE.getCommand(), bucketName, "admin");
         String result = awsCliCommandExecutor.execute(script);
         return "".equals(result) ? 0 : Double.parseDouble(result);
     }

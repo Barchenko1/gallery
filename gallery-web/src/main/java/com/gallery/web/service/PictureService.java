@@ -24,7 +24,6 @@ public class PictureService implements IPictureService {
 
     @Override
     public String uploadPictures(String folderPath, List<MultipartFile> multipartFileList) {
-        s3MultipleBucketService.setUploadFilesSize(getFilesSizeSum(multipartFileList));
         multipartFileList.forEach(multipartFile -> {
             s3MultipleBucketService.uploadMultipartFile(folderPath, multipartFile);
         });
@@ -34,7 +33,6 @@ public class PictureService implements IPictureService {
 
     @Override
     public String uploadPicturesAsync(String folderPath, List<MultipartFile> multipartFileList) {
-        s3MultipleBucketService.setUploadFilesSize(getFilesSizeSum(multipartFileList));
         multipartFileList.forEach(multipartFile -> {
             s3MultipleBucketService.uploadMultipartFileAsync(folderPath, multipartFile);
         });

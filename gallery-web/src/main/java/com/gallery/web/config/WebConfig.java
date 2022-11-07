@@ -11,7 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Configuration
@@ -26,8 +29,6 @@ public class WebConfig {
     private int bucketLimit;
     @Value("${CLOUD_AWS_S3_BUCKET_REGION}")
     private String region;
-    @Value("${CLOUD_AWS_CREDENTIALS_PROFILE-NAME}")
-    private String profileName;
     @Value("${CLOUD_AWS_S3_BUCKET_NAME_LIST}")
     private List<String> bucketNameList;
 
@@ -39,7 +40,16 @@ public class WebConfig {
 
     @Bean
     public IS3MultipleBucketService s3MultipleBucketService() {
-        IConverter<Integer, Long> megabyteToByteConverter = new MegabyteToByteConverter();
-        return new S3MultipleBucketService(s3Client(), megabyteToByteConverter.convert(bucketLimit));
+        return new S3MultipleBucketService(s3Client(), getInitBucketNameLimitMap());
+    }
+
+    private Map<String, Long> getInitBucketNameLimitMap() {
+        IConverter<Long, Long> megabyteToByteConverter = new MegabyteToByteConverter();
+
+        Map<String, Long> bucketNameLimitMap = new HashMap<>() {{
+            put("gallery-anime", megabyteToByteConverter.convert(100L));
+        }};
+
+        return new ConcurrentHashMap<>(bucketNameLimitMap);
     }
 }

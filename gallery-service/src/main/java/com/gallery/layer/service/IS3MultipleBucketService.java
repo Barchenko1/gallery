@@ -9,11 +9,15 @@ import java.io.File;
 
 public interface IS3MultipleBucketService {
 
-    void setUploadFilesSize(long uploadFilesSize);
-    void createBucket(String bucketName);
-    void createBucket(String bucketName, String region);
-    void createBucket(String bucketName, PublicAccessBlockConfiguration publicAccessBlockConfiguration);
-    void createBucket(String bucketName, String region, PublicAccessBlockConfiguration publicAccessBlockConfiguration);
+    void createBucket(String bucketName, long bucketLimit);
+
+    void createBucket(String bucketName, long bucketLimit, String region);
+
+    void createBucket(String bucketName, long bucketLimit,
+                      PublicAccessBlockConfiguration publicAccessBlockConfiguration);
+
+    void createBucket(String bucketName, long bucketLimit, String region,
+                      PublicAccessBlockConfiguration publicAccessBlockConfiguration);
     void cleanUpBucket(String bucketName);
     void deleteBucket(String bucketName);
     void deleteFile(String objectKey);

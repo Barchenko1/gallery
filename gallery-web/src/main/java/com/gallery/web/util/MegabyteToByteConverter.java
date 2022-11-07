@@ -2,9 +2,9 @@ package com.gallery.web.util;
 
 import com.gallery.layer.util.IConverter;
 
-public class MegabyteToByteConverter implements IConverter<Integer, Long> {
+public class MegabyteToByteConverter implements IConverter<Long, Long> {
     @Override
-    public Long convert(Integer megaByte) {
+    public Long convert(Long megaByte) {
         return (long) megaByte * 1024 * 1024;
     }
 }
