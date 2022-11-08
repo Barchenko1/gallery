@@ -1,8 +1,10 @@
 package com.gallery.layer.util;
 
 import com.gallery.layer.cli.AwsCliProcess;
+import com.gallery.layer.modal.BucketCapacity;
 import com.gallery.layer.modal.BucketData;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -11,12 +13,12 @@ import java.util.stream.Collectors;
 public class BucketBalancer implements IBucketBalancer {
 
     private final AwsCliProcess awsCliProcess;
-    private final Map<String, Long> bucketNameLimitMap;
+    private final List<BucketCapacity> bucketCapacityList;
     private Map<String, BucketData> bucketDataMap;
 
-    public BucketBalancer(Map<String, Long> bucketNameLimitMap) {
+    public BucketBalancer(List<BucketCapacity> bucketCapacityList) {
         this.awsCliProcess = new AwsCliProcess();
-        this.bucketNameLimitMap = bucketNameLimitMap;
+        this.bucketCapacityList = bucketCapacityList;
         initBucketBalance();
     }
 
@@ -36,19 +38,19 @@ public class BucketBalancer implements IBucketBalancer {
     }
 
     private Map<String, BucketData> balanceBuckets() {
-        return bucketNameLimitMap.entrySet().stream()
-                .map(entry -> {
+        return bucketCapacityList.stream()
+                .map(bucketCapacity -> {
                     double currentBucketSize =
-                            awsCliProcess.getCurrentBucketSize(entry.getKey());
+                            awsCliProcess.getCurrentBucketSize(bucketCapacity.getBucketName());
                     return new BucketData.BucketDataBuilder()
-                            .bucketName(entry.getKey())
+                            .bucketName(bucketCapacity.getBucketName())
                             .currentBucketSize(currentBucketSize)
                             .currentFreeCapacity(
-                                    calculateFreeCapacity(currentBucketSize, entry.getValue()))
-                            .maxCapacity(entry.getValue())
+                                    calculateFreeCapacity(currentBucketSize, bucketCapacity.getBucketCapacity()))
+                            .maxCapacity(bucketCapacity.getBucketCapacity())
                             .isAvailable(
                                     awsCliProcess.isBucketAvailable(
-                                            entry.getKey(), entry.getValue()))
+                                            bucketCapacity.getBucketName(), bucketCapacity.getBucketCapacity()))
                             .build();
                 })
                 .collect(Collectors.toMap(BucketData::getBucketName, bucketData -> bucketData));

@@ -1,16 +1,19 @@
 package com.gallery.layer.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.PublicAccessBlockConfiguration;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.Tag;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 public interface IS3BucketService {
+
+    AmazonS3 getS3Client();
     void createBucket(String bucketName);
     void createBucket(String bucketName, PublicAccessBlockConfiguration publicAccessBlockConfiguration);
     void createBucket(String bucketName, String region, PublicAccessBlockConfiguration publicAccessBlockConfiguration);
@@ -28,13 +31,18 @@ public interface IS3BucketService {
     boolean doesFolderPathExist(String bucketName, String objectKey);
     boolean doesBucketExist(String bucketName);
     void uploadFile(String bucketName, String folderPath, File file);
-    void uploadFile(String bucketName, String folderPath, File file, Map<String, String> tagMap);
-    void uploadFolderAsync(String bucketName, String folderName);
     void uploadFileAsync(String bucketName, String folderPath, File file);
+    void uploadFile(String bucketName, String folderPath, File file, List<Tag> tagList);
+    void uploadFileAsync(String bucketName, String folderPath, File file, List<Tag> tagList);
+    void uploadFolder(String bucketName, String targetPrefix, File folder);
+    void uploadFolder(String bucketName, String targetPrefix, File folder, List<Tag> tagList);
     void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile);
     void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile);
     byte[] downloadFile(String bucketName, String objectKey);
-    void copyFile(String bucket, String objectKey, String destinationBucketName, String destinationObjectKey);
+    void downloadFolder(String bucketName, String folderPath, String destinationPath);
+    void copyFileAndRemove(String bucketName, String objectKey, String destinationBucketName, String destinationObjectKey);
+    void copyFile(String bucketName, String objectKey, String destinationBucketName, String destinationObjectKey);
     void copyFolderAndRemove(String bucketName, String folderPath, String destinationBucketName, String destinationPath);
     void copyFolder(String bucketName, String folderPath, String destinationBucketName, String destinationPath);
+    List<Tag> getObjectTagging(String bucketName, String objectKey);
 }
