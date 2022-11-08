@@ -38,6 +38,8 @@ public interface IS3BucketService {
     void uploadFolder(String bucketName, String targetPrefix, File folder, List<Tag> tagList);
     void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile);
     void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile);
+    void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile, List<Tag> tagList);
+    void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile, List<Tag> tagList);
     byte[] downloadFile(String bucketName, String objectKey);
     void downloadFolder(String bucketName, String folderPath, String destinationPath);
     void copyFileAndRemove(String bucketName, String objectKey, String destinationBucketName, String destinationObjectKey);

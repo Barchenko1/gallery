@@ -264,6 +264,22 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
+    public void uploadMultipartFile(String bucketName, String folderPath, MultipartFile multipartFile, List<Tag> tagList) {
+        AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
+        File file = multipartFileToFileConverter.convert(multipartFile);
+        uploadFileToBucket(s3Client, bucketName, handleFolderPath(folderPath), file, tagList);
+        file.delete();
+    }
+
+    @Override
+    public void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile, List<Tag> tagList) {
+        AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
+        File file = multipartFileToFileConverter.convert(multipartFile);
+        uploadFileToBucketAsync(s3Client, bucketName, handleFolderPath(folderPath), file, tagList);
+        file.delete();
+    }
+
+    @Override
     public void deleteFile(String bucketName, String objectKey) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
         deleteS3BucketFile(s3Client, bucketName, objectKey);

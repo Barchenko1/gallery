@@ -1,9 +1,12 @@
 package com.gallery.web.config;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.gallery.layer.config.S3Config;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.gallery.layer.modal.BucketCapacity;
 import com.gallery.layer.service.IS3MultipleBucketService;
-import com.gallery.layer.service.S3MultipleBucketService;
+import com.gallery.layer.service.S3MultiBucketService;
 import com.gallery.layer.util.IConverter;
 import com.gallery.web.util.MegabyteToByteConverter;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,10 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 @Configuration
@@ -25,31 +26,28 @@ public class WebConfig {
     private String accessKey;
     @Value("${AWS_SECRET_ACCESS_KEY}")
     private String secretKey;
+    @Value("${CLOUD_AWS_S3_BUCKET_NAME}")
+    private String bucketName;
     @Value("${CLOUD_AWS_S3_BUCKET_LIMIT_SIZE_MB}")
-    private int bucketLimit;
+    private long bucketLimit;
     @Value("${CLOUD_AWS_S3_BUCKET_REGION}")
     private String region;
-    @Value("${CLOUD_AWS_S3_BUCKET_NAME_LIST}")
-    private List<String> bucketNameList;
-
-    @Bean
-    public AmazonS3 s3Client() {
-        S3Config s3Config = new S3Config();
-        return s3Config.getS3ClientStaticCredentials(accessKey, secretKey, region);
-    }
 
     @Bean
     public IS3MultipleBucketService s3MultipleBucketService() {
-        return new S3MultipleBucketService(s3Client(), getInitBucketNameLimitMap());
+        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+        AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(awsCredentials);
+        return new S3MultiBucketService(credentialsProvider, region, getInitBucketNameLimitList());
     }
 
-    private Map<String, Long> getInitBucketNameLimitMap() {
+    private List<BucketCapacity> getInitBucketNameLimitList() {
         IConverter<Long, Long> megabyteToByteConverter = new MegabyteToByteConverter();
 
-        Map<String, Long> bucketNameLimitMap = new HashMap<>() {{
-            put("gallery-anime", megabyteToByteConverter.convert(100L));
+        return new ArrayList<>() {{
+            add(new BucketCapacity.BucketCapacityBuilder()
+                    .bucketName(bucketName)
+                    .bucketCapacity(megabyteToByteConverter.convert(bucketLimit))
+                    .build());
         }};
-
-        return new ConcurrentHashMap<>(bucketNameLimitMap);
     }
 }
