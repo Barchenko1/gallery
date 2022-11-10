@@ -20,12 +20,12 @@ import static com.gallery.web.util.Constants.CONTENT_DISPOSITION;
 import static com.gallery.web.util.Constants.CONTENT_TYPE;
 
 @RestController
-public class S3Rest {
+public class PictureServiceApi {
 
     private final IPictureService pictureService;
 
     @Autowired
-    public S3Rest(IPictureService pictureService) {
+    public PictureServiceApi(IPictureService pictureService) {
         this.pictureService = pictureService;
     }
 
