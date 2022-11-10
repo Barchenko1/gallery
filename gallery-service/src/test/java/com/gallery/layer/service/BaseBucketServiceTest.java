@@ -31,19 +31,20 @@ public abstract class BaseBucketServiceTest {
     protected static String TEST_MULTIPLE_BUCKET = "test-multi-bucket-lib";
     protected String TEST_FOLDER_PATH = "testFolder";
     protected String TEST_FOLDER_PREFIX_PATH = "test";
-    protected String TEST_ASYNC_FOLDER_PREFIX_PATH = "testAsync";
+    protected String TEST_MULTI_BUCKET_FOLDER_PREFIX_PATH = "testMultiBucket";
     protected String TEST_FILE_TXT = "testFile.txt";
-    protected String TEST_ASYNC_FILE_TXT = "testFileAsync.txt";
+    protected String TEST_FILE_TRM_TXT = "testFileTrm.txt";
     protected String TEST_OUTPUT_FILE_TXT = "testFileOutput.txt";
-    protected String TEST_MSG = "test multi file upload lib";
+    protected String TEST_MSG = "test msg for upload lib";
+    protected String TEST_MULTI_MSG = "test multi msg for upload lib";
     protected String TEST_FILE_CONTENT_TYPE = "text/plain";
 
     protected String getObjectKey() {
         return TEST_FOLDER_PREFIX_PATH + "/" + TEST_FILE_TXT;
     }
 
-    protected String getObjectAsyncKey() {
-        return TEST_ASYNC_FOLDER_PREFIX_PATH + "/" + TEST_ASYNC_FILE_TXT;
+    protected String getObjectKeyForMultiFolder() {
+        return TEST_MULTI_BUCKET_FOLDER_PREFIX_PATH + "/" + TEST_FILE_TRM_TXT;
     }
 
     protected void waitNextTest() {

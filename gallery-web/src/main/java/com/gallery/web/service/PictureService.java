@@ -34,7 +34,7 @@ public class PictureService implements IPictureService {
     @Override
     public String uploadPicturesAsync(String folderPath, List<MultipartFile> multipartFileList) {
         multipartFileList.forEach(multipartFile -> {
-            s3MultipleBucketService.uploadMultipartFileAsync(folderPath, multipartFile);
+            s3MultipleBucketService.uploadMultipartFileTfm(folderPath, multipartFile);
         });
 
         return String.format("files success upload to %s", folderPath);

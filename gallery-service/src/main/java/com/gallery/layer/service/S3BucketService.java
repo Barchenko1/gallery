@@ -218,9 +218,9 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void uploadFileAsync(String bucketName, String folderPath, File file) {
+    public void uploadFileTfm(String bucketName, String folderPath, File file) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
-        uploadFileToBucketAsync(s3Client, bucketName, handleFolderPath(folderPath), file);
+        uploadFileToBucketTfm(s3Client, bucketName, handleFolderPath(folderPath), file);
     }
 
     @Override
@@ -230,21 +230,21 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void uploadFileAsync(String bucketName, String folderPath, File file, List<Tag> tagList) {
+    public void uploadFileTfm(String bucketName, String folderPath, File file, List<Tag> tagList) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
-        uploadFileToBucketAsync(s3Client, bucketName, folderPath, file, tagList);
+        uploadFileToBucketTfm(s3Client, bucketName, folderPath, file, tagList);
     }
 
     @Override
     public void uploadFolder(String bucketName, String targetPrefix, File folder) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
-        uploadFolderToS3Bucket(s3Client, bucketName, targetPrefix, folder);
+        uploadFolderToS3BucketTfm(s3Client, bucketName, targetPrefix, folder);
     }
 
     @Override
     public void uploadFolder(String bucket, String targetPrefix, File folder, List<Tag> tagList) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
-        uploadFolderToS3Bucket(s3Client, bucket, targetPrefix, folder, tagList);
+        uploadFolderToS3BucketTfm(s3Client, bucket, targetPrefix, folder, tagList);
     }
 
     @Override
@@ -256,10 +256,10 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile) {
+    public void uploadMultipartFileTfm(String bucketName, String folderPath, MultipartFile multipartFile) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
         File file = multipartFileToFileConverter.convert(multipartFile);
-        uploadFileToBucketAsync(s3Client, bucketName, handleFolderPath(folderPath), file);
+        uploadFileToBucketTfm(s3Client, bucketName, handleFolderPath(folderPath), file);
         file.delete();
     }
 
@@ -272,10 +272,10 @@ public class S3BucketService implements IS3BucketService {
     }
 
     @Override
-    public void uploadMultipartFileAsync(String bucketName, String folderPath, MultipartFile multipartFile, List<Tag> tagList) {
+    public void uploadMultipartFileTfm(String bucketName, String folderPath, MultipartFile multipartFile, List<Tag> tagList) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
         File file = multipartFileToFileConverter.convert(multipartFile);
-        uploadFileToBucketAsync(s3Client, bucketName, handleFolderPath(folderPath), file, tagList);
+        uploadFileToBucketTfm(s3Client, bucketName, handleFolderPath(folderPath), file, tagList);
         file.delete();
     }
 
@@ -322,8 +322,8 @@ public class S3BucketService implements IS3BucketService {
             // Generate the presigned URL.
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucketName, objectKey)
-                            .withMethod(HttpMethod.GET)
-                            .withExpiration(expiration);
+                            .withMethod(HttpMethod.GET);
+
             url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
 
         } catch (Exception e) {
@@ -382,7 +382,7 @@ public class S3BucketService implements IS3BucketService {
         s3Client.putObject(putObjectRequest);
     }
 
-    private void uploadFileToBucketAsync(AmazonS3 s3Client, String bucketName, String folderPath, File file) {
+    private void uploadFileToBucketTfm(AmazonS3 s3Client, String bucketName, String folderPath, File file) {
         TransferManager transferManager = TransferManagerBuilder.standard()
                 .withS3Client(s3Client)
                 .build();
@@ -402,8 +402,8 @@ public class S3BucketService implements IS3BucketService {
         }
     }
 
-    private void uploadFileToBucketAsync(AmazonS3 s3Client, String bucketName, String folderPath,
-                                         File file, List<Tag> tagList) {
+    private void uploadFileToBucketTfm(AmazonS3 s3Client, String bucketName, String folderPath,
+                                       File file, List<Tag> tagList) {
         TransferManager transferManager = TransferManagerBuilder.standard()
                 .withS3Client(s3Client)
                 .build();
@@ -425,8 +425,8 @@ public class S3BucketService implements IS3BucketService {
         }
     }
 
-    private void uploadFolderToS3Bucket(AmazonS3 s3Client, String bucketName,
-                                        String targetPrefix, File folder) {
+    private void uploadFolderToS3BucketTfm(AmazonS3 s3Client, String bucketName,
+                                           String targetPrefix, File folder) {
         TransferManager transferManager = TransferManagerBuilder.standard()
                 .withS3Client(s3Client)
                 .build();
@@ -443,8 +443,8 @@ public class S3BucketService implements IS3BucketService {
         }
     }
 
-    private void uploadFolderToS3Bucket(AmazonS3 s3Client, String bucketName, String targetPrefix,
-                                        File folder, List<Tag> tagList) {
+    private void uploadFolderToS3BucketTfm(AmazonS3 s3Client, String bucketName, String targetPrefix,
+                                           File folder, List<Tag> tagList) {
         TransferManager transferManager = TransferManagerBuilder.standard()
                 .withS3Client(s3Client)
                 .build();
