@@ -38,7 +38,7 @@ const Arrow = ({ direction, handleClick }: IArrow) => {
               }
             `}
         >
-            {direction === 'right' ? <img src={rightArrow} /> : <img src={leftArrow} />}
+            {direction === 'right' ? <img src={rightArrow} alt=""/> : <img src={leftArrow} alt=""/>}
         </div>
     )
 }

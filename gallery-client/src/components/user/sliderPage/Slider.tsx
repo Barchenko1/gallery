@@ -4,7 +4,6 @@ import Dots from "./Dots";
 import SliderContent from "./SliderContent";
 import Slide from "./Slide";
 import AutoPlay from "./AutoPlay";
-import Exit from "./Exit";
 import {ISlideList} from "../../../types/IType";
 
 const getWidth = () => window.innerWidth;
@@ -108,10 +107,6 @@ const Slider = ({slides}: ISlideList) => {
 
     return(
         <div>
-            <div className="slider-control-panel">
-                <AutoPlay handleClick={handleAutoPlay}/>
-                <Exit/>
-            </div>
             <div className="slider">
                 <SliderContent
                     translate={translate}
@@ -126,7 +121,9 @@ const Slider = ({slides}: ISlideList) => {
                     <Arrow direction="left" handleClick={prevSlide} />
                     <Arrow direction="right" handleClick={nextSlide} />
                 </>
-
+                <div className="slider-control-panel">
+                    <AutoPlay handleClick={handleAutoPlay}/>
+                </div>
                 <Dots slides={slides} activeIndex={activeIndex} />
             </div>
         </div>

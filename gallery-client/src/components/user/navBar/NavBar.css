@@ -1,0 +1,22 @@
+.navigate-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-flow: row;
+    align-content: stretch;
+    justify-content: center;
+    text-align: center;
+}
+
+.supportBanner {
+    text-align: center;
+}
+
+.patronImg {
+    width: 12em;
+    height: 5em;
+}
+
+.qr {
+    width: 15em;
+    height: 15em;
+}

@@ -2,9 +2,9 @@ import React from 'react';
 import './Slider.css'
 import Dot from "./Dot";
 
-interface IDot {
-    active:boolean
-}
+// interface IDot {
+//     active:boolean
+// }
 
 interface IDots {
     slides:string[],

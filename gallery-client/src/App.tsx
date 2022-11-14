@@ -9,6 +9,8 @@ import {
 } from 'react-router-dom';
 import OverviewPage from "./components/user/overviewPage/OverviewPage";
 import Header from "./components/user/header/Header";
+import SubjectPage from "./components/user/subject/SubjectPage";
+import AboutUsPage from "./components/user/info/AboutUsPage";
 
 function App() {
 
@@ -17,7 +19,9 @@ function App() {
           <Header/>
           <Routes>
               <Route path="/" element={<OverviewPage slides={images}/>} />
+              <Route path="/subjects" element={<SubjectPage />} />
               <Route path="/slider" element={<Slider slides={images} />} />
+              <Route path="/about-us" element={<AboutUsPage />}/>
           </Routes>
       </BrowserRouter>
   );
