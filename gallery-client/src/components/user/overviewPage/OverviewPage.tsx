@@ -1,5 +1,5 @@
 import React from 'react';
-import {ISlideList} from "../../types/IType";
+import {ISlideList} from "../../../types/IType";
 import OverviewElement from "./OverviewElement";
 import "./OverviewPage.css"
 import SupportBanner from "../supportBanner/SupportBanner";

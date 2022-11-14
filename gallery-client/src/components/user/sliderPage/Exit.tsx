@@ -1,5 +1,5 @@
 import React from 'react';
-import exit from "../../img/exit.png";
+import exit from "../../../img/exit.png";
 import { Link } from 'react-router-dom';
 
 const Exit = () => {

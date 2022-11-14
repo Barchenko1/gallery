@@ -1,6 +1,6 @@
 import React from 'react';
 import './Slider.css'
-import {ISlide} from "../../types/IType";
+import {ISlide} from "../../../types/IType";
 
 const Slide = ({ content }: ISlide) => {
     console.log(content);

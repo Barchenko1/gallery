@@ -5,7 +5,7 @@ import SliderContent from "./SliderContent";
 import Slide from "./Slide";
 import AutoPlay from "./AutoPlay";
 import Exit from "./Exit";
-import {ISlideList} from "../../types/IType";
+import {ISlideList} from "../../../types/IType";
 
 const getWidth = () => window.innerWidth;
 
