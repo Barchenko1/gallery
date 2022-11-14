@@ -8,4 +8,4 @@
 //     return result;
 // }
 
-export function getData() {}
+export function getFolderList() {}

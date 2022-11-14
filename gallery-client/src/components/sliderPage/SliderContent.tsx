@@ -1,6 +1,4 @@
 import React from 'react';
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 
 interface ISliderContent {
     translate:number,
@@ -10,14 +8,16 @@ interface ISliderContent {
 }
 
 const SliderContent = ({translate, transition, width, children}: ISliderContent) => {
+
+    const divStyle = {
+        transform: `translateX(-${translate}px)`,
+        transition: `transform ease-out ${transition}s`,
+        width: `${width}px`,
+    }
+
+    console.log(children);
     return(
-        <div css={css`
-            transform: translateX(-${translate}px);
-            transition: transform ease-out ${transition}s;
-            height: 100%;
-            width: ${width}px;
-            display: flex;
-        `}>
+        <div style={divStyle} className="slider-content">
             {children}
         </div>
     )

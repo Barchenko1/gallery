@@ -8,15 +8,17 @@ import {
     BrowserRouter
 } from 'react-router-dom';
 import OverviewPage from "./components/overviewPage/OverviewPage";
+import Header from "./components/header/Header";
 
 function App() {
 
   return (
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<OverviewPage slides={images}/>} />
-          <Route path="/slider" element={<Slider slides={images} />} />
-        </Routes>
+          <Header/>
+          <Routes>
+              <Route path="/" element={<OverviewPage slides={images}/>} />
+              <Route path="/slider" element={<Slider slides={images} />} />
+          </Routes>
       </BrowserRouter>
   );
 }

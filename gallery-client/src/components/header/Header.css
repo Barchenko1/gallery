@@ -1,0 +1,12 @@
+.header {
+    display: grid;
+    box-sizing: border-box;
+    width: 100%;
+    align-items: baseline;
+    padding: 1em;
+    background-color: black;
+}
+
+.title-link {
+    padding: 0 1.5em;
+}

@@ -3,8 +3,6 @@ import Arrow from "./Arrow";
 import Dots from "./Dots";
 import SliderContent from "./SliderContent";
 import Slide from "./Slide";
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 import AutoPlay from "./AutoPlay";
 import Exit from "./Exit";
 import {ISlideList} from "../../types/IType";
@@ -13,7 +11,7 @@ const getWidth = () => window.innerWidth;
 
 const Slider = ({slides}: ISlideList) => {
 
-    const AUTO_PLAY_STOP: number = 1000;
+    const AUTO_PLAY_STOP: number = 10000;
 
     const [state, setState] = useState({
         activeIndex: 0,
@@ -109,37 +107,39 @@ const Slider = ({slides}: ISlideList) => {
     const width:number = getWidth() * slides.length;
 
     return(
-        <div
-            css={SliderCSS}>
-            <SliderContent
-                translate={translate}
-                transition={transition}
-                width={width}
-            >
-                {slides.map((slide, i) => (
-                    <Slide key={slide + i} content={slide} />
-                ))}
-            </SliderContent>
-            <>
+        <div>
+            <div className="slider-control-panel">
                 <AutoPlay handleClick={handleAutoPlay}/>
                 <Exit/>
-            </>
-            <>
-                <Arrow direction="left" handleClick={prevSlide} />
-                <Arrow direction="right" handleClick={nextSlide} />
-            </>
+            </div>
+            <div className="slider">
+                <SliderContent
+                    translate={translate}
+                    transition={transition}
+                    width={width}
+                >
+                    {slides.map((slide, i) => (
+                        <Slide key={slide + i} content={slide} />
+                    ))}
+                </SliderContent>
+                <>
+                    <Arrow direction="left" handleClick={prevSlide} />
+                    <Arrow direction="right" handleClick={nextSlide} />
+                </>
 
-            <Dots slides={slides} activeIndex={activeIndex} />
+                <Dots slides={slides} activeIndex={activeIndex} />
+            </div>
         </div>
+
     )
 }
 
-const SliderCSS = css`
-  position: relative;
-  height: 100vh;
-  width: 100vw;
-  margin: 0 auto;
-  overflow: hidden;
-`
+// const SliderCSS = css`
+//   position: relative;
+//   height: 100vh;
+//   width: 100vw;
+//   margin: 0 auto;
+//   overflow: hidden;
+// `
 
 export default Slider;
