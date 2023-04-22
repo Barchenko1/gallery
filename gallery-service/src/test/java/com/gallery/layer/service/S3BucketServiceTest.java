@@ -168,6 +168,14 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
 
     @Test
     @Order(14)
+    public void getS3ObjectSummaryListLimitTest() {
+        List<S3ObjectSummary> s3ObjectSummary = s3BucketService.getS3ObjectSummaryListWithLimit(
+                TEST_BUCKET, TEST_FOLDER_PREFIX_PATH, 2);
+        Assertions.assertEquals(1, s3ObjectSummary.size());
+    }
+
+    @Test
+    @Order(15)
     public void copyFileTest() {
         String destinationFolder = "copedOne";
         s3BucketService.copyFile(TEST_BUCKET, getObjectKeyForMultiFolder(),
@@ -177,7 +185,7 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(15)
+    @Order(16)
     public void copyFileAndRemoveTest() {
         String destinationFolder = "copedOneAndRemove";
         s3BucketService.copyFileAndRemove(TEST_BUCKET, getObjectKeyForMultiFolder(),
@@ -187,7 +195,7 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(16)
+    @Order(17)
     public void copyFolderTest() {
         String destinationFolder = "coped";
         s3BucketService.copyFolder(TEST_BUCKET, TEST_FOLDER_PREFIX_PATH, TEST_BUCKET, destinationFolder);
@@ -196,7 +204,7 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(17)
+    @Order(18)
     public void copyFolderAndRemoveTest() {
         String destinationFolder = "copedAndRemove";
         s3BucketService.copyFolderAndRemove(TEST_BUCKET, TEST_FOLDER_PREFIX_PATH, TEST_BUCKET, destinationFolder);
@@ -207,28 +215,28 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(18)
+    @Order(19)
     public void deleteFileTest() {
         s3BucketService.deleteFile(TEST_BUCKET, getObjectKeyForMultiFolder());
         Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKeyForMultiFolder()));
     }
 
     @Test
-    @Order(19)
+    @Order(20)
     public void deleteFolderTest() {
         s3BucketService.deleteFolder(TEST_BUCKET, TEST_FOLDER_PREFIX_PATH);
         Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
     }
 
     @Test
-    @Order(20)
+    @Order(21)
     public void cleanUpBucketTest() {
         s3BucketService.cleanUpBucket(TEST_BUCKET);
         Assertions.assertFalse(s3BucketService.doesFolderPathExist(TEST_BUCKET, getObjectKey()));
     }
 
     @Test
-    @Order(21)
+    @Order(22)
     public void getBucketListTest() {
         List<Bucket> bucketList = s3BucketService.getBucketList();
         boolean testBucketName = bucketList.stream()
@@ -237,14 +245,14 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(22)
+    @Order(23)
     public void deleteBucketTest() {
         s3BucketService.deleteBucket(TEST_BUCKET);
         Assertions.assertFalse(s3BucketService.doesBucketExist(TEST_BUCKET));
     }
 
     @Test
-    @Order(23)
+    @Order(24)
     public void createBucketRegionAccessTest() {
         String bucketName = "test-policy-region-lib-bucket";
         PublicAccessBlockConfiguration publicAccessBlockConfiguration =
@@ -263,7 +271,7 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(24)
+    @Order(25)
     public void createBucketRegionTest() {
         String bucketName = "test--common-region-lib-bucket";
         s3BucketService.createBucket(bucketName, "eu-central-1");
@@ -275,7 +283,7 @@ public class S3BucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(25)
+    @Order(26)
     public void createBucketTest() {
         String bucketName = "test-common-lib-bucket";
         waitNextTest();

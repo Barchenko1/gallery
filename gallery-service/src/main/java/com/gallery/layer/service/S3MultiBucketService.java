@@ -290,6 +290,16 @@ public class S3MultiBucketService implements IS3MultipleBucketService {
     }
 
     @Override
+    public List<S3ObjectSummary> getS3ObjectSummaryListWithLimit(String folderPath, int limit) {
+        return getFilteredBuckets(folderPath)
+                .map(bucketName -> s3BucketService.getS3ObjectSummaryListWithLimit(bucketName, folderPath, limit))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("folder with path: %s wasn't found", folderPath)
+                ));
+    }
+
+    @Override
     public S3ObjectSummary getS3ObjectSummary(String objectKey) {
         return getFilteredBuckets(objectKey)
                 .map(bucketName -> s3BucketService.getS3ObjectSummary(bucketName, objectKey))

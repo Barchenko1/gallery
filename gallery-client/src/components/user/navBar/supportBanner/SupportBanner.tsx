@@ -12,7 +12,7 @@ const SupportBanner = () => {
             </Link>
             <img className="qr" src={qr} alt="" />
             <div>
-                Please, support project
+                You may become a project support by the links
             </div>
         </div>
     )

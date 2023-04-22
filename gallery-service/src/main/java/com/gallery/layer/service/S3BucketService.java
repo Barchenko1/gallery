@@ -294,7 +294,15 @@ public class S3BucketService implements IS3BucketService {
     @Override
     public List<S3ObjectSummary> getS3ObjectSummaryList(String bucketName, String folderPath) {
         AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
-        return getListObjectsV2Result(s3Client, bucketName, handleFolderPath(folderPath)).getObjectSummaries();
+        return getListObjectsV2Result(s3Client, bucketName, handleFolderPath(folderPath))
+                .getObjectSummaries();
+    }
+
+    @Override
+    public List<S3ObjectSummary> getS3ObjectSummaryListWithLimit(String bucketName, String folderPath, int limit) {
+        AmazonS3 s3Client = s3BucketConnectionManager.getS3Client();
+        return getListObjectsWithLimitV2Result(s3Client, bucketName, handleFolderPath(folderPath), limit)
+                .getObjectSummaries();
     }
 
     @Override
@@ -472,6 +480,15 @@ public class S3BucketService implements IS3BucketService {
     private ListObjectsV2Result getListObjectsV2Result(AmazonS3 s3Client, String bucketName, String objectKey) {
         ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
                 .withBucketName(bucketName)
+                .withPrefix(objectKey);
+        return s3Client.listObjectsV2(listObjectsV2Request);
+    }
+
+    private ListObjectsV2Result getListObjectsWithLimitV2Result(AmazonS3 s3Client, String bucketName,
+                                                                String objectKey, int limit) {
+        ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request()
+                .withBucketName(bucketName)
+                .withMaxKeys(limit)
                 .withPrefix(objectKey);
         return s3Client.listObjectsV2(listObjectsV2Request);
     }

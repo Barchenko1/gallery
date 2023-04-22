@@ -169,6 +169,14 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
 
     @Test
     @Order(14)
+    public void getS3ObjectSummaryListLimitTest() {
+        List<S3ObjectSummary> s3ObjectSummary = s3MultipleBucketService.getS3ObjectSummaryListWithLimit(
+                TEST_FOLDER_PREFIX_PATH, 2);
+        Assertions.assertEquals(1, s3ObjectSummary.size());
+    }
+
+    @Test
+    @Order(15)
     public void copyFileTest() {
         String destinationFolder = "copedOne";
         s3MultipleBucketService.copyFile(getObjectKeyForMultiFolder(),
@@ -178,7 +186,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(15)
+    @Order(16)
     public void copyFileAndRemoveTest() {
         String destinationFolder = "copedOneAndRemove";
         s3MultipleBucketService.copyFileAndRemove(getObjectKeyForMultiFolder(),
@@ -188,7 +196,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(16)
+    @Order(17)
     public void copyFolderTest() {
         String destinationFolder = "coped";
         s3MultipleBucketService.copyFolder(TEST_FOLDER_PREFIX_PATH, destinationFolder);
@@ -197,7 +205,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(17)
+    @Order(18)
     public void copyFolderAndRemoveTest() {
         String destinationFolder = "copedAndRemove";
         s3MultipleBucketService.copyFolderAndRemove(TEST_FOLDER_PREFIX_PATH, destinationFolder);
@@ -207,14 +215,14 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(18)
+    @Order(19)
     public void deleteFileTest() {
         s3MultipleBucketService.deleteFile(getObjectKeyForMultiFolder());
         Assertions.assertFalse(s3MultipleBucketService.doesFolderPathExist(getObjectKeyForMultiFolder()));
     }
 
     @Test
-    @Order(19)
+    @Order(20)
     public void deleteFolderTest() {
         s3MultipleBucketService.deleteFolder(TEST_FOLDER_PREFIX_PATH);
         Assertions.assertFalse(
@@ -222,7 +230,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(20)
+    @Order(21)
     public void cleanUpBucketTest() {
         s3MultipleBucketService.cleanUpBucket(TEST_MULTIPLE_BUCKET);
         Assertions.assertFalse(
@@ -230,7 +238,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(21)
+    @Order(22)
     public void deleteBucketTest() {
         s3MultipleBucketService.deleteBucket(TEST_MULTIPLE_BUCKET);
         Assertions.assertFalse(
@@ -238,7 +246,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(22)
+    @Order(23)
     public void createBucketRegionAccessTest() {
         String bucketName = "test-policy-region-lib-bucket";
         PublicAccessBlockConfiguration publicAccessBlockConfiguration =
@@ -257,7 +265,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(23)
+    @Order(24)
     public void createBucketRegionTest() {
         String bucketName = "test--common-region-lib-bucket";
         s3MultipleBucketService.createBucket(bucketName, 100L, "eu-central-1");
@@ -269,7 +277,7 @@ public class S3MultipleBucketServiceTest extends BaseBucketServiceTest {
     }
 
     @Test
-    @Order(24)
+    @Order(25)
     public void createBucketTest() {
         String bucketName = "test-common-lib-bucket";
         waitNextTest();

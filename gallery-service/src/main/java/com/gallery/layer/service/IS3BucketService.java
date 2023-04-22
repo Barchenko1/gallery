@@ -24,6 +24,7 @@ public interface IS3BucketService {
     void deleteFolder(String bucketName, String objectKey);
     List<Bucket> getBucketList();
     List<S3ObjectSummary> getS3ObjectSummaryList(String bucketName, String folderPath);
+    List<S3ObjectSummary> getS3ObjectSummaryListWithLimit(String bucketName, String folderPath, int limit);
     S3ObjectSummary getS3ObjectSummary(String bucketName, String objectKey);
     S3Object getS3Object(String bucketName, String objectKey);
     String getFileUrl(String bucketName, String objectKey);
